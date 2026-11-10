@@ -1,18 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
-<head><meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data: blob:; media-src data: blob:; font-src data:; connect-src 'none'; form-action 'none'; base-uri 'none'; frame-src 'none'; object-src 'none'"><script>(function(){var n=function(){throw new Error("network is blocked in this app")};try{window.fetch=n;window.XMLHttpRequest=n;window.WebSocket=n;window.EventSource=n;window.open=function(){return null};if(navigator.sendBeacon)navigator.sendBeacon=function(){return false}}catch(e){}})();</script>
+<head><meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data: blob:; media-src data: blob:; font-src data:; connect-src 'none'; form-action 'none'; base-uri 'none'; frame-src 'none'; object-src 'none'"><script>(function(){var n=function(){throw new Error("network is blocked in this app")};try{window.fetch=n;window.XMLHttpRequest=n;window.WebSocket=n;window.EventSource=n;window.open=function(){return null};if(navigator.sendBeacon)navigator.sendBeacon=function(){return false}}catch(e){}})();</script><script>(function(){var n=function(){throw new Error("network is blocked in this app")};try{window.fetch=n;window.XMLHttpRequest=n;window.WebSocket=n;window.EventSource=n;window.open=function(){return null};if(navigator.sendBeacon)navigator.sendBeacon=function(){return false}}catch(e){}})();</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>My To-Do List</title>
 <style>
 *{box-sizing:border-box}
-body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;background:#f4f7fb;font-family:"Segoe Print","Comic Sans MS",cursive,sans-serif;color:#1a1a5e;background-image:repeating-linear-gradient(#f4f7fb 0 29px,#e3e9f3 30px)}
+body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;background:#cfe8ff;font-family:"Segoe Print","Comic Sans MS",cursive,sans-serif;color:#1a1a5e;background-image:repeating-linear-gradient(#cfe8ff 0 29px,#b9dbf8 30px)}
 .card{width:100%;max-width:420px;min-height:520px;margin:16px;background:#fff;border:3px solid #222;border-radius:6px;padding:20px;display:flex;flex-direction:column;box-shadow:6px 6px 0 #1a1a5e22}
 h1{margin:0 0 16px;font-size:28px;text-align:center;letter-spacing:1px}
 form{display:flex;gap:10px;margin-bottom:18px}
 input[type=text]{flex:1;min-width:0;font:inherit;font-size:18px;padding:10px;border:3px solid #222;border-radius:4px;color:#1a1a5e}
-button.add{font:inherit;font-size:18px;padding:0 16px;min-height:48px;border:3px solid #222;background:#fff;color:#1a1a5e;border-radius:4px;cursor:pointer}
-button.add:active{background:#dde4ff}
+button.add{font:inherit;font-size:18px;font-weight:bold;padding:0 16px;min-height:48px;border:3px solid #1e7a35;background:#34c759;color:#fff;border-radius:4px;cursor:pointer}
+button.add:hover{background:#2fb552}
+button.add:active{background:#27a047}
 ul{list-style:none;margin:0;padding:0;flex:1}
 li{display:flex;align-items:center;gap:12px;padding:8px 0;font-size:22px}
 li .t{flex:1;word-break:break-word}
