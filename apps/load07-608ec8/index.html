@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data: blob:; media-src data: blob:; font-src data:; connect-src 'none'; form-action 'none'; base-uri 'none'; frame-src 'none'; object-src 'none'"><script>(function(){var n=function(){throw new Error("network is blocked in this app")};try{window.fetch=n;window.XMLHttpRequest=n;window.WebSocket=n;window.EventSource=n;window.open=function(){return null};if(navigator.sendBeacon)navigator.sendBeacon=function(){return false}}catch(e){}})();</script><style data-xw="1">*{-webkit-user-select:none!important;user-select:none!important;-webkit-touch-callout:none!important;-webkit-tap-highlight-color:transparent!important}
+input,textarea,[contenteditable="true"],[contenteditable=""]{-webkit-user-select:text!important;user-select:text!important}
+html,body{touch-action:manipulation;overscroll-behavior:none}
+button,a,[role=button],select,summary,label{touch-action:manipulation}
+canvas{touch-action:none}
+img,svg{-webkit-user-drag:none;user-drag:none}</style><script data-xw="1">(function(){
+var held={},keys={},tn=/^(BUTTON|CANVAS)$/,ctl=/(^|[^a-z])(btn|button|ctrl|control|pad|key|arrow|dpad|left|right|up|down|jump|fire|shoot|move|hold)([^a-z]|$)/i;
+function isCtl(e){try{if(!e||e.nodeType!==1)return false;if(tn.test(e.tagName)||e.getAttribute('role')==='button')return true;return ctl.test((e.id||'')+' '+(typeof e.className==='string'?e.className:''))}catch(x){return false}}
+function noScroll(e){try{if(isCtl(e))e.style.setProperty('touch-action','none')}catch(x){}}
+// elements that listen for presses get touch-action:none, so holding or sliding never scrolls or zooms
+try{var add=EventTarget.prototype.addEventListener;EventTarget.prototype.addEventListener=function(t){if(t==='pointerdown'||t==='touchstart'||t==='mousedown')noScroll(this);return add.apply(this,arguments)}}catch(x){}
+function scan(){try{var l=document.querySelectorAll('[onpointerdown],[ontouchstart],[onmousedown],button,canvas');for(var i=0;i<l.length;i++){var e=l[i];if(e.hasAttribute('onpointerdown')||e.hasAttribute('ontouchstart')||e.hasAttribute('onmousedown')||e.tagName==='CANVAS')noScroll(e)}}catch(x){}}
+document.addEventListener('DOMContentLoaded',scan);window.addEventListener('load',scan);
+document.addEventListener('contextmenu',function(e){e.preventDefault()},true);
+document.addEventListener('selectstart',function(e){var t=e.target&&e.target.nodeType===1?e.target:e.target&&e.target.parentElement;if(t&&/^(INPUT|TEXTAREA)$/.test(t.tagName)||t&&t.isContentEditable)return;e.preventDefault()},true);
+document.addEventListener('dragstart',function(e){e.preventDefault()},true);
+function fire(el,type,id,pt){try{var o={bubbles:true,cancelable:true,composed:true,pointerId:id,pointerType:pt||'touch',isPrimary:true,view:window};
+if(type.indexOf('pointer')===0&&window.PointerEvent)el.dispatchEvent(new PointerEvent(type,o));
+else if(type.indexOf('mouse')===0)el.dispatchEvent(new MouseEvent(type,{bubbles:type!=='mouseleave',cancelable:true,view:window}));
+else if(type.indexOf('touch')===0&&window.TouchEvent)el.dispatchEvent(new TouchEvent(type,{bubbles:true,cancelable:true}))}catch(x){}}
+function release(id){var h=held[id];if(!h)return;delete held[id];var el=h.el;if(!el||!el.isConnected)return;
+['pointerup','pointerout','pointerleave'].forEach(function(t){fire(el,t,id,h.pt)});['mouseup','mouseout','mouseleave'].forEach(function(t){fire(el,t,id,h.pt)});fire(el,'touchend',id,h.pt)}
+function releaseAll(){Object.keys(held).forEach(release);Object.keys(keys).forEach(function(k){var h=keys[k];delete keys[k];try{(document.activeElement||document.body).dispatchEvent(new KeyboardEvent('keyup',{key:h.key,code:h.code,keyCode:h.kc,which:h.kc,bubbles:true,cancelable:true}))}catch(x){}})}
+window.addEventListener('pointerdown',function(e){held[e.pointerId]={el:e.target,pt:e.pointerType}},true);
+window.addEventListener('pointerup',function(e){var h=held[e.pointerId];if(!h)return;if(h.el===e.target||e.pointerType==='touch'&&h.el.contains&&h.el.contains(e.target)){delete held[e.pointerId]}else release(e.pointerId)},true);
+window.addEventListener('pointercancel',function(e){setTimeout(function(){release(e.pointerId)},0)},true);
+window.addEventListener('lostpointercapture',function(e){setTimeout(function(){release(e.pointerId)},30)},true);
+window.addEventListener('mousedown',function(e){if(!held.mouse)held.mouse={el:e.target,pt:'mouse'}},true);
+window.addEventListener('mouseup',function(e){var h=held.mouse;if(!h)return;if(h.el!==e.target){release('mouse')}else delete held.mouse},true);
+window.addEventListener('touchcancel',function(){setTimeout(function(){Object.keys(held).forEach(release)},0)},true);
+window.addEventListener('keydown',function(e){if(e.key)keys[e.code||e.key]={key:e.key,code:e.code,kc:e.keyCode}},true);
+window.addEventListener('keyup',function(e){delete keys[e.code||e.key]},true);
+window.addEventListener('blur',releaseAll);window.addEventListener('pagehide',releaseAll);
+document.addEventListener('visibilitychange',function(){if(document.hidden)releaseAll()});
+window.__xwRelease=releaseAll;
+})();</script><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>My To-Do List</title>
+<style>
+*{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;-webkit-tap-highlight-color:transparent;box-sizing:border-box}
+input{-webkit-user-select:text;user-select:text}
+html,body{touch-action:manipulation;overscroll-behavior:none;margin:0;height:100%;overflow:hidden}
+:root{--ink:#1b1b5e;--bg:#faf6ee;--a:#4f5bd5;--b:#ff7a59;--c:#2bb673;--d:#ffd166;--card:#fff;--r:18px}
+body{font:16px/1.4 "Segoe Print","Bradley Hand","Comic Sans MS",system-ui,sans-serif;color:var(--ink);background:repeating-linear-gradient(#faf6ee 0 35px,#dfe3f5 35px 36px);display:flex;align-items:center;justify-content:center}
+#ph{width:min(100vw,440px);height:100dvh;max-height:860px;background:var(--bg);display:flex;flex-direction:column;position:relative;overflow:hidden;box-shadow:0 10px 40px #1b1b5e33;border-radius:0}
+@media(min-width:600px){#ph{height:min(100dvh - 30px,820px);border-radius:32px;border:3px solid var(--ink)}}
+header{padding:18px 18px 14px;background:linear-gradient(135deg,var(--a),#7b5cd6);color:#fff;display:flex;align-items:center;justify-content:space-between}
+h1{margin:0;font-size:22px;letter-spacing:1px}
+#snd{background:#ffffff33;border:0;color:#fff;border-radius:50%;width:44px;height:44px;font-size:20px}
+main{flex:1;overflow:hidden;position:relative}
+.scr{position:absolute;inset:0;padding:16px;overflow-y:auto;transition:transform .35s,opacity .35s}
+.scr.off{transform:translateX(40px);opacity:0;pointer-events:none}
+form{display:flex;gap:10px;margin-bottom:14px}
+input{flex:1;min-width:0;height:58px;border:3px solid var(--ink);border-radius:var(--r);padding:0 14px;font:inherit;background:#fff;color:var(--ink)}
+input:focus{outline:3px solid var(--d)}
+button{font:inherit;color:inherit;cursor:pointer;transition:transform .12s,background .2s}
+button:active{transform:scale(.92)}
+.add{height:58px;min-width:80px;border:3px solid var(--ink);background:var(--b);color:#fff;font-weight:700;border-radius:var(--r)}
+.t{display:flex;align-items:center;gap:12px;background:var(--card);border:2px solid var(--ink);border-radius:var(--r);padding:6px 8px;margin-bottom:10px;min-height:64px;animation:in .3s}
+@keyframes in{from{transform:translateY(-10px) scale(.95);opacity:0}}
+.t.rm{transition:.3s;transform:translateX(100%);opacity:0}
+.cb{width:56px;height:56px;flex:none;border:0;background:none;display:grid;place-items:center}
+.cb i{width:34px;height:34px;border:3px solid var(--ink);border-radius:9px;display:grid;place-items:center;color:#fff;font-style:normal;transition:.2s}
+.t.done .cb i{background:var(--c);border-color:var(--c)}
+.t.done span{text-decoration:line-through;opacity:.5}
+.t span{flex:1;font-size:19px;word-break:break-word}
+.x{width:56px;height:56px;border:0;background:none;font-size:26px;color:var(--b)}
+.empty{text-align:center;padding:40px 10px;font-size:18px}
+.empty b{display:block;font-size:56px}
+.foot{padding:10px 18px;text-align:center;font-size:18px;font-weight:700}
+nav{display:flex;border-top:3px solid var(--ink);background:#fff;padding-bottom:env(safe-area-inset-bottom)}
+nav button{flex:1;height:64px;border:0;background:none;font-size:14px;font-weight:700;opacity:.55}
+nav button.on{opacity:1;color:var(--a);background:#eef0ff}
+nav button span{display:block;font-size:22px}
+.st{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.card{background:#fff;border:2px solid var(--ink);border-radius:var(--r);padding:16px;text-align:center}
+.card b{display:block;font-size:38px;color:var(--a)}
+.bar{height:20px;border:2px solid var(--ink);border-radius:12px;margin:14px 0;overflow:hidden;background:#fff}
+#fill{height:100%;background:var(--c);width:0;transition:width .4s}
+.clr{width:100%;height:58px;border:3px solid var(--ink);background:var(--d);border-radius:var(--r);font-weight:700}
+</style></head><body>
+<div id="ph">
+<header><h1 id="ti">📝 MY TO-DO LIST</h1><button id="snd" aria-label="sound">🔇</button></header>
+<main>
+<section class="scr" id="s1">
+<form id="f"><input id="in" placeholder="add a task..." maxlength="60" autocomplete="off"><button class="add">ADD</button></form>
+<div id="L"></div>
+</section>
+<section class="scr off" id="s2">
+<div class="st"><div class="card"><b id="n1">0</b>tasks left</div><div class="card"><b id="n2">0</b>done</div></div>
+<div class="bar"><div id="fill"></div></div>
+<p id="msg" style="text-align:center;font-size:18px"></p>
+<button class="clr" id="clr">🧹 Clear finished tasks</button>
+</section>
+</main>
+<div class="foot" id="ft"></div>
+<nav><button class="on" data-s="s1"><span>✅</span>Tasks</button><button data-s="s2"><span>📊</span>Progress</button></nav>
+</div>
+<script>
+let tasks=[{id:1,t:"buy milk",d:0},{id:2,t:"math homework",d:0},{id:3,t:"call grandma",d:0}],nid=4,on=0,ac;
+const $=s=>document.querySelector(s);
+document.addEventListener("contextmenu",e=>e.preventDefault());
+function beep(f,l=.1){if(!on)return;ac=ac||new(window.AudioContext||window.webkitAudioContext)();const o=ac.createOscillator(),g=ac.createGain();o.frequency.value=f;o.type="triangle";g.gain.setValueAtTime(.15,ac.currentTime);g.gain.exponentialRampToValueAtTime(.001,ac.currentTime+l);o.connect(g);g.connect(ac.destination);o.start();o.stop(ac.currentTime+l)}
+$("#snd").onclick=()=>{on=!on;$("#snd").textContent=on?"🔊":"🔇";beep(660)};
+function esc(s){return s.replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]))}
+function draw(){
+const L=$("#L");
+L.innerHTML=tasks.length?tasks.map(k=>`<div class="t${k.d?" done":""}" data-id="${k.id}"><button class="cb" data-a="c" aria-label="check"><i>${k.d?"✓":""}</i></button><span>${esc(k.t)}</span><button class="x" data-a="x" aria-label="delete">✕</button></div>`).join(""):`<div class="empty"><b>🎉</b>All clear! Add a task above.</div>`;
+const left=tasks.filter(k=>!k.d).length,dn=tasks.length-left;
+const txt=left===0&&tasks.length?"🎉 All done! Great job!":left+(left==1?" task":" tasks")+" left";
+$("#ft").textContent=txt;$("#n1").textContent=left;$("#n2").textContent=dn;
+$("#fill").style.width=(tasks.length?dn/tasks.length*100:0)+"%";
+$("#msg").textContent=!tasks.length?"Nothing planned yet.":left?"Keep going, you've got this! 💪":"Everything is finished! 🌟"}
+$("#f").onsubmit=e=>{e.preventDefault();const v=$("#in").value.trim();if(!v){$("#in").focus();return}tasks.push({id:nid++,t:v,d:0});$("#in").value="";beep(740);draw();$("#s1").scrollTop=1e5};
+$("#L").onclick=e=>{const b=e.target.closest("button");if(!b)return;const el=b.closest(".t"),id=+el.dataset.id,k=tasks.find(q=>q.id==id);
+if(b.dataset.a=="c"){k.d=k.d?0:1;beep(k.d?880:440);draw()}
+else{beep(300,.15);el.classList.add("rm");setTimeout(()=>{tasks=tasks.filter(q=>q.id!=id);draw()},280)}};
+$("#clr").onclick=()=>{tasks=tasks.filter(k=>!k.d);beep(520);draw()};
+document.querySelectorAll("nav button").forEach(b=>b.onclick=()=>{document.querySelectorAll("nav button").forEach(x=>x.classList.toggle("on",x==b));["s1","s2"].forEach(s=>$("#"+s).classList.toggle("off",s!=b.dataset.s));$("#ti").textContent=b.dataset.s=="s1"?"📝 MY TO-DO LIST":"📊 MY PROGRESS";beep(600,.06)});
+draw();
+</script></body></html>
