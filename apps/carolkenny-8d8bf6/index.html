@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data: blob:; media-src data: blob:; font-src data:; connect-src 'none'; form-action 'none'; base-uri 'none'; frame-src 'none'; object-src 'none'"><script>(function(){var n=function(){throw new Error("network is blocked in this app")};try{window.fetch=n;window.XMLHttpRequest=n;window.WebSocket=n;window.EventSource=n;window.open=function(){return null};if(navigator.sendBeacon)navigator.sendBeacon=function(){return false}}catch(e){}})();</script><style data-xw="1">*{-webkit-user-select:none!important;user-select:none!important;-webkit-touch-callout:none!important;-webkit-tap-highlight-color:transparent!important}
+input,textarea,[contenteditable="true"],[contenteditable=""]{-webkit-user-select:text!important;user-select:text!important}
+html,body{touch-action:manipulation;overscroll-behavior:none}
+button,a,[role=button],select,summary,label{touch-action:manipulation}
+canvas{touch-action:none}
+img,svg{-webkit-user-drag:none;user-drag:none}</style><script data-xw="1">(function(){
+var held={},keys={},tn=/^(BUTTON|CANVAS)$/,ctl=/(^|[^a-z])(btn|button|ctrl|control|pad|key|arrow|dpad|left|right|up|down|jump|fire|shoot|move|hold)([^a-z]|$)/i;
+function isCtl(e){try{if(!e||e.nodeType!==1)return false;if(tn.test(e.tagName)||e.getAttribute('role')==='button')return true;return ctl.test((e.id||'')+' '+(typeof e.className==='string'?e.className:''))}catch(x){return false}}
+function noScroll(e){try{if(isCtl(e))e.style.setProperty('touch-action','none')}catch(x){}}
+// elements that listen for presses get touch-action:none, so holding or sliding never scrolls or zooms
+try{var add=EventTarget.prototype.addEventListener;EventTarget.prototype.addEventListener=function(t){if(t==='pointerdown'||t==='touchstart'||t==='mousedown')noScroll(this);return add.apply(this,arguments)}}catch(x){}
+function scan(){try{var l=document.querySelectorAll('[onpointerdown],[ontouchstart],[onmousedown],button,canvas');for(var i=0;i<l.length;i++){var e=l[i];if(e.hasAttribute('onpointerdown')||e.hasAttribute('ontouchstart')||e.hasAttribute('onmousedown')||e.tagName==='CANVAS')noScroll(e)}}catch(x){}}
+document.addEventListener('DOMContentLoaded',scan);window.addEventListener('load',scan);
+document.addEventListener('contextmenu',function(e){e.preventDefault()},true);
+document.addEventListener('selectstart',function(e){var t=e.target&&e.target.nodeType===1?e.target:e.target&&e.target.parentElement;if(t&&/^(INPUT|TEXTAREA)$/.test(t.tagName)||t&&t.isContentEditable)return;e.preventDefault()},true);
+document.addEventListener('dragstart',function(e){e.preventDefault()},true);
+function fire(el,type,id,pt){try{var o={bubbles:true,cancelable:true,composed:true,pointerId:id,pointerType:pt||'touch',isPrimary:true,view:window};
+if(type.indexOf('pointer')===0&&window.PointerEvent)el.dispatchEvent(new PointerEvent(type,o));
+else if(type.indexOf('mouse')===0)el.dispatchEvent(new MouseEvent(type,{bubbles:type!=='mouseleave',cancelable:true,view:window}));
+else if(type.indexOf('touch')===0&&window.TouchEvent)el.dispatchEvent(new TouchEvent(type,{bubbles:true,cancelable:true}))}catch(x){}}
+function release(id){var h=held[id];if(!h)return;delete held[id];var el=h.el;if(!el||!el.isConnected)return;
+['pointerup','pointerout','pointerleave'].forEach(function(t){fire(el,t,id,h.pt)});['mouseup','mouseout','mouseleave'].forEach(function(t){fire(el,t,id,h.pt)});fire(el,'touchend',id,h.pt)}
+function releaseAll(){Object.keys(held).forEach(release);Object.keys(keys).forEach(function(k){var h=keys[k];delete keys[k];try{(document.activeElement||document.body).dispatchEvent(new KeyboardEvent('keyup',{key:h.key,code:h.code,keyCode:h.kc,which:h.kc,bubbles:true,cancelable:true}))}catch(x){}})}
+window.addEventListener('pointerdown',function(e){held[e.pointerId]={el:e.target,pt:e.pointerType}},true);
+window.addEventListener('pointerup',function(e){var h=held[e.pointerId];if(!h)return;if(h.el===e.target||e.pointerType==='touch'&&h.el.contains&&h.el.contains(e.target)){delete held[e.pointerId]}else release(e.pointerId)},true);
+window.addEventListener('pointercancel',function(e){setTimeout(function(){release(e.pointerId)},0)},true);
+window.addEventListener('lostpointercapture',function(e){setTimeout(function(){release(e.pointerId)},30)},true);
+window.addEventListener('mousedown',function(e){if(!held.mouse)held.mouse={el:e.target,pt:'mouse'}},true);
+window.addEventListener('mouseup',function(e){var h=held.mouse;if(!h)return;if(h.el!==e.target){release('mouse')}else delete held.mouse},true);
+window.addEventListener('touchcancel',function(){setTimeout(function(){Object.keys(held).forEach(release)},0)},true);
+window.addEventListener('keydown',function(e){if(e.key)keys[e.code||e.key]={key:e.key,code:e.code,kc:e.keyCode}},true);
+window.addEventListener('keyup',function(e){delete keys[e.code||e.key]},true);
+window.addEventListener('blur',releaseAll);window.addEventListener('pagehide',releaseAll);
+document.addEventListener('visibilitychange',function(){if(document.hidden)releaseAll()});
+window.__xwRelease=releaseAll;
+})();</script><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>No Fear Writers Club</title>
+<style>
+*{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;-webkit-tap-highlight-color:transparent;box-sizing:border-box}
+input,textarea{-webkit-user-select:text;user-select:text}
+html,body{touch-action:manipulation;overscroll-behavior:none}
+:root{--a:#ff6b4a;--b:#ffc145;--c:#2ec4b6;--d:#1b1b3a;--l:#fff8ee;--r:18px}
+html{scroll-behavior:smooth}
+body{margin:0;font-family:system-ui,sans-serif;background:var(--l);color:var(--d);overflow-x:hidden;line-height:1.5}
+nav{position:sticky;top:0;z-index9;z-index:9;display:flex;align-items:center;gap:6px;padding:8px 14px;background:var(--d);flex-wrap:wrap}
+nav b{color:var(--b);font-size:18px;margin-right:auto}
+nav a,button{min-height:56px;display:inline-flex;align-items:center;justify-content:center;padding:0 16px;border-radius:var(--r);border:0;font:inherit;font-weight:700;cursor:pointer;transition:.15s;text-decoration:none}
+nav a{color:var(--l);min-height:44px;padding:0 12px}
+nav a:hover{background:#ffffff22}
+button{background:var(--a);color:#fff}
+button:active,nav a:active{transform:scale(.95)}
+button.alt{background:var(--c);color:var(--d)}
+section{padding:64px 20px;max-width:1000px;margin:auto}
+h1{font-size:clamp(38px,8vw,76px);line-height:1;margin:0 0 12px}
+h2{font-size:32px;margin:0 0 18px}
+.hero{max-width:none;text-align:center;color:#fff;background:radial-gradient(circle at 20% 20%,#ff6b4acc,transparent 40%),radial-gradient(circle at 80% 70%,#2ec4b6aa,transparent 45%),var(--d);padding:90px 20px}
+.hero p{font-size:20px;max-width:560px;margin:0 auto 24px}
+.tags{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:24px}
+.tags span{background:#ffffff22;padding:6px 14px;border-radius:99px;font-weight:700;color:var(--b)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px}
+.card{background:#fff;border-radius:var(--r);padding:20px;box-shadow:0 6px 18px #1b1b3a18;transition:.2s}
+.card:hover{transform:translateY(-4px)}
+.card .e{font-size:40px}
+.prompt{background:var(--b);border-radius:var(--r);padding:28px;font-size:22px;font-weight:700;text-align:center;margin-bottom:16px;min-height:110px;display:flex;align-items:center;justify-content:center}
+textarea,input{width:100%;border:2px solid var(--d);border-radius:var(--r);padding:14px;font:inherit;background:#fff;margin-bottom:12px}
+textarea{min-height:140px;resize:vertical}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+.chips button{background:#fff;color:var(--d);border:2px solid var(--d);min-height:44px}
+.chips button.on{background:var(--d);color:var(--b)}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.ok{background:var(--c);padding:18px;border-radius:var(--r);font-weight:700;display:none}
+.wall .card{border-left:6px solid var(--a)}
+footer{text-align:center;padding:30px;background:var(--d);color:var(--l)}
+</style></head><body>
+<nav><b>✍️ No Fear Writers</b><a href="#about">About</a><a href="#prompts">Prompts</a><a href="#gallery">Gallery</a><a href="#join">Join</a><button id="snd" class="alt" style="min-height:44px">🔇 Sound off</button></nav>
+<header class="hero" id="top"><div class="tags"><span>Laptop</span><span>Prompts</span><span>Visuals</span><span>Ideas</span><span>Creativity</span></div>
+<h1>Write with<br>No Fear!</h1><p>A creative writing club for every genre and every age. Bring a laptop, bring an idea, leave with a story.</p>
+<button onclick="go('prompts')">Get a prompt ✨</button></header>
+<section id="about"><h2>About the club</h2><div class="grid">
+<div class="card"><div class="e">🧙</div><b>All genres</b><p>Fantasy, mystery, poetry, sci-fi, comedy, memoir. Anything goes.</p></div>
+<div class="card"><div class="e">👧👴</div><b>All ages</b><p>Teens, parents and grandparents write side by side.</p></div>
+<div class="card"><div class="e">💡</div><b>Idea sparks</b><p>Weekly prompts and visuals to wake up your imagination.</p></div>
+<div class="card"><div class="e">🛡️</div><b>No fear</b><p>Kind feedback only. Messy first drafts are welcome.</p></div></div></section>
+<section id="prompts" style="background:#ffe9c4;max-width:none"><div style="max-width:1000px;margin:auto"><h2>Prompt machine</h2>
+<div class="chips" id="ch"></div>
+<div class="prompt" id="pr">Pick a genre and tap the button!</div>
+<div class="row"><button id="nx">🎲 New prompt</button><span id="cnt"></span></div>
+<h2 style="margin-top:28px">Your draft</h2>
+<textarea id="tx" placeholder="Start writing here..."></textarea>
+<div class="row"><button class="alt" id="pub">📌 Pin to the wall</button><span id="wc">0 words</span></div>
+<div class="wall grid" id="wall" style="margin-top:18px"></div></div></section>
+<section id="gallery"><h2>Visual inspiration</h2><p>Tap a picture to use it as your next prompt.</p><div class="grid" id="gal"></div></section>
+<section id="join" style="background:#fff;max-width:none"><div style="max-width:600px;margin:auto"><h2>Join the club</h2>
+<p>We meet Thursdays at 4pm in the library, and online too.</p>
+<input id="nm" placeholder="Your first name"><input id="fv" placeholder="Favourite genre">
+<button id="jb" style="width:100%">Join No Fear Writers 🎉</button><div class="ok" id="ok" style="margin-top:14px"></div></div></section>
+<footer>✍️ No Fear Writers Club · Write bravely.</footer>
+<script>
+const $=i=>document.getElementById(i);let ac,on=0,g='Any';
+const P={Fantasy:["A dragon is afraid of fire. Tell its story.","You find a door in a tree that only opens at midnight.","Your shadow decides to leave town without you."],Mystery:["Every clock in town stops at 3:07. Why?","A letter arrives addressed to you, dated 50 years ago.","The librarian vanished, leaving one book open."],"Sci-fi":["The last robot on Earth learns to laugh.","Your laptop starts answering questions you never typed.","A tiny moon appears over your school."],Poetry:["Write about the sound of rain in five lines.","Describe your favourite colour without naming it.","A poem that begins with 'No fear'."],Comedy:["A cat becomes mayor and makes awful rules.","Your sandwich has opinions today.","The world's worst superhero applies for a job."]};
+const G=[["🌋","Volcano island"],["🚀","Rocket garden"],["🏰","Castle in the clouds"],["🐙","Octopus café"],["🌲","Glowing forest"],["🎪","Midnight circus"]];
+function beep(f){if(!on)return;ac=ac||new AudioContext();const o=ac.createOscillator(),v=ac.createGain();o.frequency.value=f;v.gain.value=.08;v.gain.exponentialRampToValueAtTime(.001,ac.currentTime+.2);o.connect(v);v.connect(ac.destination);o.start();o.stop(ac.currentTime+.2)}
+$('snd').onclick=()=>{on=!on;$('snd').textContent=on?'🔊 Sound on':'🔇 Sound off';ac=ac||new AudioContext();beep(600)};
+function go(i){$(i).scrollIntoView({behavior:'smooth'});beep(500)}
+document.querySelectorAll('nav a').forEach(a=>a.onclick=e=>{e.preventDefault();go(a.getAttribute('href').slice(1))});
+let n=0;
+function mk(){$('ch').innerHTML='';['Any',...Object.keys(P)].forEach(k=>{const b=document.createElement('button');b.textContent=k;b.className=k==g?'on':'';b.onclick=()=>{g=k;mk();np()};$('ch').append(b)})}
+function np(){const l=g=='Any'?Object.values(P).flat():P[g];$('pr').textContent=l[Math.random()*l.length|0];n++;$('cnt').textContent='Prompts tried: '+n;beep(700)}
+$('nx').onclick=np;mk();
+$('tx').oninput=()=>{const w=$('tx').value.trim().split(/\s+/).filter(Boolean).length;$('wc').textContent=w+' words'};
+const W=[["Mia, 11","The moon had a secret and it told only me."],["Mr. Obi, 68","I wrote my first poem today. It rhymed badly. I loved it."]];
+function rw(){$('wall').innerHTML=W.map(w=>`<div class="card"><p>“${w[1].replace(/</g,'&lt;')}”</p><b>— ${w[0]}</b></div>`).join('')}
+$('pub').onclick=()=>{const t=$('tx').value.trim();if(!t){$('pr').textContent='Write something first. No fear!';return}W.unshift(["You",t.slice(0,200)]);$('tx').value='';$('wc').textContent='0 words';rw();beep(880)};rw();
+$('gal').innerHTML=G.map((x,i)=>`<div class="card" style="text-align:center;cursor:pointer" data-i="${i}"><div class="e" style="font-size:72px">${x[0]}</div><b>${x[1]}</b></div>`).join('');
+document.querySelectorAll('#gal .card').forEach(c=>c.onclick=()=>{const x=G[c.dataset.i];$('pr').textContent=`${x[0]} Write a story set in: ${x[1]}.`;go('prompts');beep(760)});
+$('jb').onclick=()=>{const a=$('nm').value.trim()||'Friend';const f=$('fv').value.trim()||'every genre';$('ok').style.display='block';$('ok').textContent=`Welcome, ${a.slice(0,30)}! See you Thursday for some ${f.slice(0,30)} writing. 🎉`;beep(900)};
+document.addEventListener('contextmenu',e=>e.preventDefault());
+</script></body></html>
