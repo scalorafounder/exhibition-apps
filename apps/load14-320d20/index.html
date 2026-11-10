@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data: blob:; media-src data: blob:; font-src data:; connect-src 'none'; form-action 'none'; base-uri 'none'; frame-src 'none'; object-src 'none'"><script>(function(){var n=function(){throw new Error("network is blocked in this app")};try{window.fetch=n;window.XMLHttpRequest=n;window.WebSocket=n;window.EventSource=n;window.open=function(){return null};if(navigator.sendBeacon)navigator.sendBeacon=function(){return false}}catch(e){}})();</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Study Timer</title>
+<style>
+  *{box-sizing:border-box}
+  body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;background:#faf7f0;font-family:"Comic Sans MS","Segoe Print",cursive,sans-serif;color:#1a1a5e}
+  .card{width:min(92vw,380px);border:3px solid #222;border-radius:8px;padding:24px 20px;text-align:center;background:#fffdf8}
+  h1{margin:0 0 18px;font-size:1.8rem;letter-spacing:1px}
+  .ring{position:relative;width:240px;height:240px;margin:0 auto 24px}
+  .ring svg{position:absolute;inset:0;transform:rotate(-90deg)}
+  .time{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:3.4rem;font-weight:bold}
+  .btns{display:flex;gap:12px}
+  button{flex:1;padding:16px 0;font:inherit;font-size:1.3rem;color:#1a1a5e;background:#fff;border:3px solid #222;border-radius:6px;cursor:pointer;min-height:56px}
+  button:active{transform:scale(.96)}
+  #start.run{background:#ffe9a8}
+  .sessions{margin-top:20px;font-size:1.2rem}
+  .msg{min-height:1.4em;margin-top:8px;color:#2a8a4a}
+</style>
+</head>
+<body>
+<div class="card">
+  <h1>STUDY TIMER</h1>
+  <div class="ring">
+    <svg width="240" height="240" viewBox="0 0 240 240">
+      <circle cx="120" cy="120" r="112" fill="none" stroke="#222" stroke-width="5"/>
+      <circle id="prog" cx="120" cy="120" r="102" fill="none" stroke="#6c7be0" stroke-width="8" stroke-linecap="round" stroke-dasharray="641" stroke-dashoffset="0"/>
+    </svg>
+    <div class="time" id="time">25:00</div>
+  </div>
+  <div class="btns">
+    <button id="start">START</button>
+    <button id="reset">RESET</button>
+  </div>
+  <div class="sessions">Sessions done: <span id="count">0</span></div>
+  <div class="msg" id="msg"></div>
+</div>
+<script>
+  const TOTAL = 25 * 60;
+  let left = TOTAL, timer = null, done = 0;
+  const $ = id => document.getElementById(id);
+  function render() {
+    const m = String(Math.floor(left / 60)).padStart(2, '0');
+    const s = String(left % 60).padStart(2, '0');
+    $('time').textContent = m + ':' + s;
+    $('prog').style.strokeDashoffset = 641 * (1 - left / TOTAL);
+    $('start').textContent = timer ? 'PAUSE' : 'START';
+    $('start').classList.toggle('run', !!timer);
+    document.title = timer ? m + ':' + s + ' - Study Timer' : 'Study Timer';
+  }
+  function stop() { clearInterval(timer); timer = null; }
+  function tick() {
+    left--;
+    if (left <= 0) {
+      left = 0; stop(); done++;
+      $('count').textContent = done;
+      $('msg').textContent = '🎉 Session complete! Take a break.';
+      render();
+      left = TOTAL;
+      return;
+    }
+    render();
+  }
+  $('start').onclick = () => {
+    if (timer) { stop(); }
+    else {
+      if (left === TOTAL || left === 0) left = left || TOTAL;
+      $('msg').textContent = '';
+      timer = setInterval(tick, 1000);
+    }
+    render();
+  };
+  $('reset').onclick = () => {
+    stop(); left = TOTAL; $('msg').textContent = ''; render();
+  };
+  render();
+</script>
+</body>
+</html>
