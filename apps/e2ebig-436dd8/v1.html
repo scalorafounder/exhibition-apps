@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data: blob:; media-src data: blob:; font-src data:; connect-src 'none'; form-action 'none'; base-uri 'none'; frame-src 'none'; object-src 'none'"><script>(function(){var n=function(){throw new Error("network is blocked in this app")};try{window.fetch=n;window.XMLHttpRequest=n;window.WebSocket=n;window.EventSource=n;window.open=function(){return null};if(navigator.sendBeacon)navigator.sendBeacon=function(){return false}}catch(e){}})();</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>My To-Do List Game</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;background:#eef3fb;font-family:"Comic Sans MS","Segoe Print",cursive;color:#1a1a5e}
+.card{width:min(94vw,420px);background:#fff;border:3px solid #222;border-radius:6px;padding:18px;box-shadow:6px 6px 0 #1a1a5e33}
+h1{margin:0 0 12px;text-align:center;font-size:28px;letter-spacing:1px}
+.row{display:flex;gap:8px}
+input[type=text]{flex:1;min-width:0;font:inherit;font-size:18px;padding:10px;border:3px solid #222;border-radius:4px;color:#1a1a5e}
+button{font:inherit;cursor:pointer}
+#add{padding:10px 16px;font-size:18px;border:3px solid #222;background:#ffe27a;color:#1a1a5e;border-radius:4px}
+ul{list-style:none;padding:0;margin:16px 0;min-height:180px}
+li{display:flex;align-items:center;gap:12px;padding:8px 4px;font-size:22px;animation:pop .3s}
+@keyframes pop{from{transform:scale(.6);opacity:0}}
+.box{width:38px;height:38px;border:3px solid #222;border-radius:4px;background:#fff;font-size:24px;line-height:1;flex:none}
+li.done .t{text-decoration:line-through;opacity:.5}
+li.done .box{background:#9be59b}
+.t{flex:1;word-break:break-word}
+.x{background:none;border:none;font-size:30px;width:44px;height:44px;color:#222}
+.foot{display:flex;justify-content:space-between;align-items:center;font-size:18px}
+#msg{text-align:center;margin-top:10px;min-height:24px;font-weight:bold;color:#c0392b}
+#clr{border:2px solid #222;background:#fff;border-radius:4px;padding:6px 10px;color:#1a1a5e}
+.score{text-align:center;font-size:16px;margin-bottom:6px}
+</style>
+</head>
+<body>
+<div class="card">
+<h1>MY TO-DO LIST</h1>
+<div class="score">⭐ Score: <span id="sc">0</span> · Streak 🔥 <span id="st">0</span></div>
+<form class="row" id="f">
+<input type="text" id="in" placeholder="add a task..." maxlength="40" autocomplete="off">
+<button id="add" type="submit">ADD</button>
+</form>
+<ul id="list"></ul>
+<div class="foot"><span id="left"></span><button id="clr">🔄 Restart</button></div>
+<div id="msg"></div>
+</div>
+<script>
+let id=0,score=0,streak=0,tasks=[];
+const $=s=>document.querySelector(s);
+function seed(){tasks=["buy milk","math homework","call grandma"].map(t=>({id:id++,t,d:false}));score=0;streak=0;$('#msg').textContent='';render()}
+function render(){
+ const ul=$('#list');ul.innerHTML='';
+ tasks.forEach(k=>{
+  const li=document.createElement('li');if(k.d)li.className='done';
+  const b=document.createElement('button');b.className='box';b.textContent=k.d?'✓':'';
+  b.onclick=()=>{k.d=!k.d;if(k.d){streak++;score+=10*streak;}else{score=Math.max(0,score-10);streak=0}
+   if(tasks.length&&tasks.every(x=>x.d))$('#msg').style.color='#1e8e3e',$('#msg').textContent='🎉 You win! All tasks done! Score '+score;
+   else $('#msg').textContent='';
+   render()};
+  const s=document.createElement('span');s.className='t';s.textContent=k.t;
+  const x=document.createElement('button');x.className='x';x.textContent='✕';
+  x.onclick=()=>{tasks=tasks.filter(z=>z!==k);streak=0;$('#msg').style.color='#c0392b';$('#msg').textContent=tasks.length?'':'Empty list! Add a task to play again.';render()};
+  li.append(b,s,x);ul.append(li);
+ });
+ const n=tasks.filter(k=>!k.d).length;
+ $('#left').textContent=n+' task'+(n==1?'':'s')+' left';
+ $('#sc').textContent=score;$('#st').textContent=streak;
+}
+$('#f').onsubmit=e=>{e.preventDefault();const v=$('#in').value.trim();if(!v)return;
+ tasks.push({id:id++,t:v,d:false});$('#in').value='';$('#msg').textContent='';render()};
+$('#clr').onclick=seed;
+seed();
+</script>
+</body>
+</html>
