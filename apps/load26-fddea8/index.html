@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data: blob:; media-src data: blob:; font-src data:; connect-src 'none'; form-action 'none'; base-uri 'none'; frame-src 'none'; object-src 'none'"><script>(function(){var n=function(){throw new Error("network is blocked in this app")};try{window.fetch=n;window.XMLHttpRequest=n;window.WebSocket=n;window.EventSource=n;window.open=function(){return null};if(navigator.sendBeacon)navigator.sendBeacon=function(){return false}}catch(e){}})();</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tony's Pizza</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:"Comic Sans MS","Segoe Print",cursive,sans-serif;background:#faf7f0;color:#1b1f5c;min-height:100vh;display:flex;justify-content:center;padding:12px}
+.app{width:100%;max-width:960px;border:3px solid #222;background:#fffdf8;display:flex;flex-direction:column}
+header{border-bottom:3px solid #222;padding:14px 20px}
+h1{margin:0;font-size:2.2rem;letter-spacing:2px}
+.menu{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:18px;padding:20px}
+.item{display:flex;flex-direction:column;align-items:center;gap:12px}
+.card{width:100%;border:3px solid #222;padding:16px;text-align:center;background:#fff}
+.pizza{font-size:5rem;line-height:1;display:inline-block;transition:transform .2s}
+.pizza.pop{transform:scale(1.25) rotate(20deg)}
+.name{font-size:1.2rem;margin-top:10px;font-weight:bold}
+.desc{font-size:.9rem;opacity:.75}
+button{font:inherit;color:#1b1f5c;background:#fff;border:3px solid #222;padding:12px 22px;min-height:48px;cursor:pointer;font-size:1.1rem;text-transform:uppercase}
+button:active{background:#ffe08a}
+.cart{margin:0 20px 20px;border:3px solid #222;padding:16px;display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between}
+.sum{font-size:1.3rem;text-transform:uppercase}
+.lines{width:100%;font-size:.95rem;min-height:1.2em}
+.checkout{background:#ffd23f}
+#msg{text-align:center;padding:0 20px 16px;min-height:1.5em;font-weight:bold;color:#2a7d2a}
+</style>
+</head>
+<body>
+<div class="app">
+<header><h1>🍕 TONY'S PIZZA</h1></header>
+<div class="menu" id="menu"></div>
+<div class="cart">
+<div class="sum">Your cart: <span id="count">0 items</span> &nbsp; Total <span id="total">$0</span></div>
+<button class="checkout" id="checkout">Checkout</button>
+<div class="lines" id="lines">Your cart is empty.</div>
+</div>
+<div id="msg"></div>
+</div>
+<script>
+const pizzas=[
+{n:"Margherita",p:10,e:"🍕",d:"Tomato, mozzarella, basil"},
+{n:"Pepperoni",p:12,e:"🍕",d:"Spicy pepperoni, extra cheese"},
+{n:"Veggie",p:11,e:"🥦",d:"Peppers, olives, mushrooms"}];
+const qty=pizzas.map(()=>0);
+const menu=document.getElementById("menu");
+pizzas.forEach((z,i)=>{
+const d=document.createElement("div");d.className="item";
+d.innerHTML=`<div class="card"><span class="pizza" id="p${i}">${z.e}</span><div class="name">${z.n} $${z.p}</div><div class="desc">${z.d}</div></div><button data-i="${i}">Order</button>`;
+menu.appendChild(d);
+});
+function render(){
+let c=0,t=0,l=[];
+qty.forEach((q,i)=>{c+=q;t+=q*pizzas[i].p;if(q)l.push(q+" × "+pizzas[i].n)});
+document.getElementById("count").textContent=c+(c==1?" item":" items");
+document.getElementById("total").textContent="$"+t;
+document.getElementById("lines").textContent=l.length?l.join(", "):"Your cart is empty.";
+}
+menu.addEventListener("click",e=>{
+const b=e.target.closest("button");if(!b)return;
+const i=+b.dataset.i;qty[i]++;
+const el=document.getElementById("p"+i);el.classList.add("pop");setTimeout(()=>el.classList.remove("pop"),200);
+document.getElementById("msg").textContent="";
+render();
+});
+document.getElementById("checkout").onclick=()=>{
+const c=qty.reduce((a,b)=>a+b,0);
+const m=document.getElementById("msg");
+if(!c){m.style.color="#b00";m.textContent="Add a pizza first!";return}
+const t=qty.reduce((a,q,i)=>a+q*pizzas[i].p,0);
+m.style.color="#2a7d2a";
+m.textContent="Thanks! Your "+c+" pizza"+(c>1?"s":"")+" ($"+t+") will be ready soon! 🎉";
+qty.fill(0);render();
+};
+render();
+</script>
+</body>
+</html>
