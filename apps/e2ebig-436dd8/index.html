@@ -1,18 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
-<head><meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data: blob:; media-src data: blob:; font-src data:; connect-src 'none'; form-action 'none'; base-uri 'none'; frame-src 'none'; object-src 'none'"><script>(function(){var n=function(){throw new Error("network is blocked in this app")};try{window.fetch=n;window.XMLHttpRequest=n;window.WebSocket=n;window.EventSource=n;window.open=function(){return null};if(navigator.sendBeacon)navigator.sendBeacon=function(){return false}}catch(e){}})();</script>
+<head><meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data: blob:; media-src data: blob:; font-src data:; connect-src 'none'; form-action 'none'; base-uri 'none'; frame-src 'none'; object-src 'none'"><script>(function(){var n=function(){throw new Error("network is blocked in this app")};try{window.fetch=n;window.XMLHttpRequest=n;window.WebSocket=n;window.EventSource=n;window.open=function(){return null};if(navigator.sendBeacon)navigator.sendBeacon=function(){return false}}catch(e){}})();</script><script>(function(){var n=function(){throw new Error("network is blocked in this app")};try{window.fetch=n;window.XMLHttpRequest=n;window.WebSocket=n;window.EventSource=n;window.open=function(){return null};if(navigator.sendBeacon)navigator.sendBeacon=function(){return false}}catch(e){}})();</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>My To-Do List Game</title>
 <style>
 *{box-sizing:border-box}
-body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;background:#eef3fb;font-family:"Comic Sans MS","Segoe Print",cursive;color:#1a1a5e}
+body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;background:#add8f7;font-family:"Comic Sans MS","Segoe Print",cursive;color:#1a1a5e}
 .card{width:min(94vw,420px);background:#fff;border:3px solid #222;border-radius:6px;padding:18px;box-shadow:6px 6px 0 #1a1a5e33}
 h1{margin:0 0 12px;text-align:center;font-size:28px;letter-spacing:1px}
 .row{display:flex;gap:8px}
 input[type=text]{flex:1;min-width:0;font:inherit;font-size:18px;padding:10px;border:3px solid #222;border-radius:4px;color:#1a1a5e}
 button{font:inherit;cursor:pointer}
-#add{padding:10px 16px;font-size:18px;border:3px solid #222;background:#ffe27a;color:#1a1a5e;border-radius:4px}
+#add{padding:10px 16px;font-size:18px;border:3px solid #222;background:#3ecf5a;color:#fff;font-weight:bold;border-radius:4px}
+#add:active{background:#2ea94610;background:#2ea946}
 ul{list-style:none;padding:0;margin:16px 0;min-height:180px}
 li{display:flex;align-items:center;gap:12px;padding:8px 4px;font-size:22px;animation:pop .3s}
 @keyframes pop{from{transform:scale(.6);opacity:0}}
