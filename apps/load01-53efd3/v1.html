@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data: blob:; media-src data: blob:; font-src data:; connect-src 'none'; form-action 'none'; base-uri 'none'; frame-src 'none'; object-src 'none'"><script>(function(){var n=function(){throw new Error("network is blocked in this app")};try{window.fetch=n;window.XMLHttpRequest=n;window.WebSocket=n;window.EventSource=n;window.open=function(){return null};if(navigator.sendBeacon)navigator.sendBeacon=function(){return false}}catch(e){}})();</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Tony's Pizza</title>
+<style>
+*{box-sizing:border-box;margin:0;-webkit-tap-highlight-color:transparent}
+body{font-family:system-ui,sans-serif;background:#2b2b3a;display:flex;justify-content:center;align-items:center;min-height:100vh}
+#app{width:100%;max-width:430px;height:100vh;max-height:860px;background:#fff8ee;display:flex;flex-direction:column;position:relative;overflow:hidden;border-radius:0}
+@media(min-width:500px){#app{border-radius:28px;height:90vh}}
+header{background:#c62828;color:#fff;padding:18px;font-size:24px;font-weight:800;letter-spacing:1px}
+main{flex:1;overflow:auto;padding:14px;position:relative}
+.screen{display:none;animation:in .3s}
+.screen.on{display:block}
+@keyframes in{from{opacity:0;transform:translateX(30px)}to{opacity:1;transform:none}}
+.card{background:#fff;border-radius:18px;padding:14px;margin-bottom:14px;box-shadow:0 2px 8px #0002;display:flex;align-items:center;gap:14px}
+.pz{font-size:56px;width:84px;height:84px;border-radius:50%;background:#ffe8c2;display:flex;align-items:center;justify-content:center}
+.info{flex:1}
+.info b{font-size:18px;display:block}
+.info span{color:#c62828;font-weight:700;font-size:17px}
+button{border:0;font-size:16px;font-weight:700;cursor:pointer;border-radius:12px;min-height:46px;padding:0 16px}
+.order{background:#2e7d32;color:#fff;margin-top:8px}
+.order:active{transform:scale(.94)}
+#cart{background:#fff;border-top:2px solid #eee;padding:12px 16px}
+#cart .row{display:flex;justify-content:space-between;align-items:center;font-weight:700;font-size:16px}
+.co{background:#c62828;color:#fff;width:100%;margin-top:10px;min-height:52px;font-size:18px}
+.co:disabled{background:#bbb}
+.li{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid #eee}
+.li button{min-height:36px;background:#eee;padding:0 12px}
+.link{background:none;color:#c62828;text-decoration:underline;min-height:30px;padding:0}
+.big{text-align:center;padding:40px 10px;font-size:20px}
+.big div{font-size:70px}
+</style>
+</head>
+<body>
+<div id="app">
+<header>🍕 TONY'S PIZZA</header>
+<main>
+<section class="screen on" id="menu"></section>
+<section class="screen" id="cartScr"></section>
+<section class="screen" id="done"></section>
+</main>
+<div id="cart">
+<div class="row"><span id="cnt">YOUR CART: 0 items</span><span id="tot">TOTAL $0</span></div>
+<div class="row" style="margin-top:4px"><button class="link" id="view">View cart</button></div>
+<button class="co" id="co" disabled>CHECKOUT</button>
+</div>
+</div>
+<script>
+const P=[{n:"Margherita",p:10,e:"🍅"},{n:"Pepperoni",p:12,e:"🍕"},{n:"Veggie",p:11,e:"🥦"}];
+let cart=[0,0,0],scr="menu";
+const $=id=>document.getElementById(id);
+function show(s){scr=s;["menu","cartScr","done"].forEach(x=>$(x).classList.toggle("on",x==s));render()}
+function count(){return cart.reduce((a,b)=>a+b,0)}
+function total(){return cart.reduce((a,q,i)=>a+q*P[i].p,0)}
+function render(){
+$("menu").innerHTML=P.map((x,i)=>`<div class="card"><div class="pz">${x.e}</div><div class="info"><b>${x.n}</b><span>$${x.p}</span><br><button class="order" onclick="add(${i})">ORDER${cart[i]?" ("+cart[i]+")":""}</button></div></div>`).join("");
+const c=count();
+$("cartScr").innerHTML=c?`<h2 style="margin-bottom:8px">Your order</h2>`+P.map((x,i)=>cart[i]?`<div class="li"><span>${x.e} ${x.n} × ${cart[i]}</span><span>$${x.p*cart[i]} <button onclick="rem(${i})">−</button></span></div>`:"").join("")+`<p style="margin:14px 0;font-weight:800">Total: $${total()}</p><button class="link" onclick="show('menu')">← Back to menu</button>`:`<div class="big"><div>🛒</div>Your cart is empty<br><button class="link" onclick="show('menu')">Back to menu</button></div>`;
+$("cnt").textContent="YOUR CART: "+c+" item"+(c==1?"":"s");
+$("tot").textContent="TOTAL $"+total();
+$("co").disabled=!c||scr=="done";
+$("view").textContent=scr=="cartScr"?"Back to menu":"View cart";
+}
+function add(i){cart[i]++;render()}
+function rem(i){cart[i]--;render()}
+$("view").onclick=()=>show(scr=="cartScr"?"menu":"cartScr");
+$("co").onclick=()=>{
+$("done").innerHTML=`<div class="big"><div>🎉</div>Thank you! Your ${count()} pizza${count()>1?"s are":" is"} on the way.<br>Total paid: $${total()}<br><br><button class="co" style="width:auto;padding:0 24px" onclick="cart=[0,0,0];show('menu')">Order more</button></div>`;
+show("done")};
+render();
+</script>
+</body>
+</html>
