@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data: blob:; media-src data: blob:; font-src data:; connect-src 'none'; form-action 'none'; base-uri 'none'; frame-src 'none'; object-src 'none'"><script>(function(){var n=function(){throw new Error("network is blocked in this app")};try{window.fetch=n;window.XMLHttpRequest=n;window.WebSocket=n;window.EventSource=n;window.open=function(){return null};if(navigator.sendBeacon)navigator.sendBeacon=function(){return false}}catch(e){}})();</script><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>My To-Do List Game</title>
+<style>
+body{margin:0;background:#faf7f0 repeating-linear-gradient(#faf7f0 0 47px,#dde3f3 47px 48px);font-family:"Comic Sans MS",cursive,sans-serif;color:#1a1a5c;display:flex;justify-content:center;min-height:100vh}
+#app{width:min(94vw,460px);margin:16px 0;background:#faf7f0;border:3px solid #222;border-radius:6px;padding:14px;box-sizing:border-box;position:relative}
+h1{text-align:center;margin:4px 0 10px;font-size:26px}
+.row{display:flex;gap:8px}
+input{flex:1;font:inherit;font-size:18px;padding:10px;border:3px solid #222;background:#fff;min-width:0}
+button{font:inherit;cursor:pointer}
+#add{border:3px solid #222;background:#ffe27a;font-size:18px;padding:0 14px}
+#stats{display:flex;justify-content:space-between;margin:10px 0;font-size:16px}
+#bar{height:12px;border:2px solid #222;background:#fff}#fill{height:100%;width:0;background:#4caf50;transition:width .3s}
+li{list-style:none;display:flex;align-items:center;gap:10px;padding:8px 0;font-size:20px;animation:in .3s}
+@keyframes in{from{opacity:0;transform:translateX(-20px)}}
+ul{padding:0;margin:8px 0;min-height:200px}
+.box{width:38px;height:38px;border:3px solid #222;background:#fff;font-size:24px;flex:none;padding:0}
+.t{flex:1;word-break:break-word}.done .t{text-decoration:line-through;opacity:.5}
+.x{background:none;border:none;font-size:28px;color:#222;width:44px;height:44px}
+#msg{text-align:center;font-size:18px;min-height:24px}
+#win{display:none;position:absolute;inset:0;background:#faf7f0ee;flex-direction:column;align-items:center;justify-content:center;text-align:center;font-size:24px}
+#win button{margin-top:14px;font-size:20px;padding:10px 20px;border:3px solid #222;background:#ffe27a}
+</style></head><body>
+<div id="app">
+<h1>MY TO-DO LIST</h1>
+<div class="row"><input id="in" placeholder="add a task..." maxlength="40"><button id="add">ADD</button></div>
+<div id="stats"><span>⭐ Score: <b id="sc">0</b></span><span>⏱ <b id="tm">60</b>s</span></div>
+<div id="bar"><div id="fill"></div></div>
+<ul id="ul"></ul>
+<div id="msg">Clear tasks before time runs out! Press Enter to add.</div>
+<div id="stats"><span id="left"></span><button id="rs" style="border:2px solid #222;background:#fff;padding:4px 10px">Restart</button></div>
+<div id="win"><div id="wt"></div><button id="again">Play again</button></div>
+</div>
+<script>
+const $=id=>document.getElementById(id);
+const start=["buy milk","math homework","call grandma"];
+const pool=["walk the dog","water plants","read a chapter","tidy my desk","practice guitar","drink water","stretch","send a thank-you"];
+let tasks,score,time,timer,spawn,id,total;
+function init(){
+tasks=[];score=0;time=60;id=0;total=0;
+start.forEach(add);
+$("win").style.display="none";
+clearInterval(timer);clearInterval(spawn);
+timer=setInterval(()=>{time--;if(time<=0){time=0;end(false)}draw()},1000);
+spawn=setInterval(()=>{if(tasks.filter(t=>!t.d).length<8)add(pool[Math.random()*pool.length|0]);draw()},4000);
+$("msg").textContent="Clear tasks before time runs out! New ones keep coming.";
+draw();}
+function add(s){tasks.push({id:id++,s,d:false});total++}
+function end(w){clearInterval(timer);clearInterval(spawn);
+$("wt").innerHTML=(w?"🎉 You win!":"⏰ Time's up!")+"<br>Score: "+score;$("win").style.display="flex"}
+function draw(){
+$("ul").innerHTML="";
+tasks.forEach(t=>{const l=document.createElement("li");if(t.d)l.className="done";
+l.innerHTML='<button class="box">'+(t.d?"✔":"")+'</button><span class="t"></span><button class="x">✕</button>';
+l.querySelector(".t").textContent=t.s;
+l.querySelector(".box").onclick=()=>{if(time<=0)return;t.d=!t.d;if(t.d){score+=10;time+=2;$("msg").textContent="Nice! +10 points, +2s ✨"}else score=Math.max(0,score-10);draw()};
+l.querySelector(".x").onclick=()=>{tasks=tasks.filter(x=>x!==t);draw()};
+$("ul").appendChild(l)});
+const n=tasks.filter(t=>!t.d).length;
+$("left").textContent=n+" task"+(n==1?"":"s")+" left";
+$("sc").textContent=score;$("tm").textContent=time;
+const dn=tasks.filter(t=>t.d).length;
+$("fill").style.width=Math.min(100,score/2)+"%";
+if(score>=100&&time>0)end(true);}
+function addTask(){const v=$("in").value.trim();if(!v)return;add(v);$("in").value="";draw()}
+$("add").onclick=addTask;
+$("in").onkeydown=e=>{if(e.key=="Enter")addTask()};
+$("rs").onclick=$("again").onclick=init;
+init();
+</script></body></html>
