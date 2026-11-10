@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data: blob:; media-src data: blob:; font-src data:; connect-src 'none'; form-action 'none'; base-uri 'none'; frame-src 'none'; object-src 'none'"><script>(function(){var n=function(){throw new Error("network is blocked in this app")};try{window.fetch=n;window.XMLHttpRequest=n;window.WebSocket=n;window.EventSource=n;window.open=function(){return null};if(navigator.sendBeacon)navigator.sendBeacon=function(){return false}}catch(e){}})();</script><style data-xw="1">*{-webkit-user-select:none!important;user-select:none!important;-webkit-touch-callout:none!important;-webkit-tap-highlight-color:transparent!important}
+input,textarea,[contenteditable="true"],[contenteditable=""]{-webkit-user-select:text!important;user-select:text!important}
+html,body{touch-action:manipulation;overscroll-behavior:none}
+button,a,[role=button],select,summary,label{touch-action:manipulation}
+canvas{touch-action:none}
+img,svg{-webkit-user-drag:none;user-drag:none}</style><script data-xw="1">(function(){
+var held={},keys={},tn=/^(BUTTON|CANVAS)$/,ctl=/(^|[^a-z])(btn|button|ctrl|control|pad|key|arrow|dpad|left|right|up|down|jump|fire|shoot|move|hold)([^a-z]|$)/i;
+function isCtl(e){try{if(!e||e.nodeType!==1)return false;if(tn.test(e.tagName)||e.getAttribute('role')==='button')return true;return ctl.test((e.id||'')+' '+(typeof e.className==='string'?e.className:''))}catch(x){return false}}
+function noScroll(e){try{if(isCtl(e))e.style.setProperty('touch-action','none')}catch(x){}}
+// elements that listen for presses get touch-action:none, so holding or sliding never scrolls or zooms
+try{var add=EventTarget.prototype.addEventListener;EventTarget.prototype.addEventListener=function(t){if(t==='pointerdown'||t==='touchstart'||t==='mousedown')noScroll(this);return add.apply(this,arguments)}}catch(x){}
+function scan(){try{var l=document.querySelectorAll('[onpointerdown],[ontouchstart],[onmousedown],button,canvas');for(var i=0;i<l.length;i++){var e=l[i];if(e.hasAttribute('onpointerdown')||e.hasAttribute('ontouchstart')||e.hasAttribute('onmousedown')||e.tagName==='CANVAS')noScroll(e)}}catch(x){}}
+document.addEventListener('DOMContentLoaded',scan);window.addEventListener('load',scan);
+document.addEventListener('contextmenu',function(e){e.preventDefault()},true);
+document.addEventListener('selectstart',function(e){var t=e.target&&e.target.nodeType===1?e.target:e.target&&e.target.parentElement;if(t&&/^(INPUT|TEXTAREA)$/.test(t.tagName)||t&&t.isContentEditable)return;e.preventDefault()},true);
+document.addEventListener('dragstart',function(e){e.preventDefault()},true);
+function fire(el,type,id,pt){try{var o={bubbles:true,cancelable:true,composed:true,pointerId:id,pointerType:pt||'touch',isPrimary:true,view:window};
+if(type.indexOf('pointer')===0&&window.PointerEvent)el.dispatchEvent(new PointerEvent(type,o));
+else if(type.indexOf('mouse')===0)el.dispatchEvent(new MouseEvent(type,{bubbles:type!=='mouseleave',cancelable:true,view:window}));
+else if(type.indexOf('touch')===0&&window.TouchEvent)el.dispatchEvent(new TouchEvent(type,{bubbles:true,cancelable:true}))}catch(x){}}
+function release(id){var h=held[id];if(!h)return;delete held[id];var el=h.el;if(!el||!el.isConnected)return;
+['pointerup','pointerout','pointerleave'].forEach(function(t){fire(el,t,id,h.pt)});['mouseup','mouseout','mouseleave'].forEach(function(t){fire(el,t,id,h.pt)});fire(el,'touchend',id,h.pt)}
+function releaseAll(){Object.keys(held).forEach(release);Object.keys(keys).forEach(function(k){var h=keys[k];delete keys[k];try{(document.activeElement||document.body).dispatchEvent(new KeyboardEvent('keyup',{key:h.key,code:h.code,keyCode:h.kc,which:h.kc,bubbles:true,cancelable:true}))}catch(x){}})}
+window.addEventListener('pointerdown',function(e){held[e.pointerId]={el:e.target,pt:e.pointerType}},true);
+window.addEventListener('pointerup',function(e){var h=held[e.pointerId];if(!h)return;if(h.el===e.target||e.pointerType==='touch'&&h.el.contains&&h.el.contains(e.target)){delete held[e.pointerId]}else release(e.pointerId)},true);
+window.addEventListener('pointercancel',function(e){setTimeout(function(){release(e.pointerId)},0)},true);
+window.addEventListener('lostpointercapture',function(e){setTimeout(function(){release(e.pointerId)},30)},true);
+window.addEventListener('mousedown',function(e){if(!held.mouse)held.mouse={el:e.target,pt:'mouse'}},true);
+window.addEventListener('mouseup',function(e){var h=held.mouse;if(!h)return;if(h.el!==e.target){release('mouse')}else delete held.mouse},true);
+window.addEventListener('touchcancel',function(){setTimeout(function(){Object.keys(held).forEach(release)},0)},true);
+window.addEventListener('keydown',function(e){if(e.key)keys[e.code||e.key]={key:e.key,code:e.code,kc:e.keyCode}},true);
+window.addEventListener('keyup',function(e){delete keys[e.code||e.key]},true);
+window.addEventListener('blur',releaseAll);window.addEventListener('pagehide',releaseAll);
+document.addEventListener('visibilitychange',function(){if(document.hidden)releaseAll()});
+window.__xwRelease=releaseAll;
+})();</script><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>Brick Breaker Neon</title>
+<style>
+*{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;-webkit-tap-highlight-color:transparent;box-sizing:border-box}
+html,body{touch-action:manipulation;overscroll-behavior:none;margin:0;height:100dvh;overflow:hidden}
+:root{--bg:#120b2e;--a:#ff4d8d;--b:#ffb703;--c:#2ec4b6;--d:#7b5cff;--l:#fff7ec;--r:16px}
+body{background:radial-gradient(circle at 50% 0,#2a1760,var(--bg) 70%);color:var(--l);font-family:system-ui,Segoe UI,Roboto,sans-serif;display:flex;flex-direction:column;align-items:center}
+#top{width:100%;max-width:520px;display:flex;justify-content:space-between;align-items:center;padding:8px 12px;font-weight:700;font-size:15px;gap:8px}
+#top span{background:#ffffff14;padding:6px 12px;border-radius:var(--r)}
+#snd{background:#ffffff14;color:var(--l);border:0;border-radius:var(--r);height:36px;padding:0 12px;font-size:15px}
+#wrap{position:relative;flex:1;min-height:0;width:100%;max-width:520px;padding:0 8px}
+canvas{width:100%;height:100%;display:block;touch-action:none;border:2px solid #ffffff30;border-radius:var(--r);background:#0c0722aa}
+#ov{position:absolute;inset:0 8px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;background:#120b2ecc;border-radius:var(--r);text-align:center;padding:20px}
+h1{font-size:clamp(32px,9vw,48px);margin:0;background:linear-gradient(90deg,var(--a),var(--b));-webkit-background-clip:text;background-clip:text;color:transparent}
+p{margin:0;opacity:.85;font-size:16px}
+.big{min-height:64px;padding:0 40px;font-size:22px;font-weight:800;border:0;border-radius:var(--r);background:linear-gradient(135deg,var(--a),var(--d));color:#fff;transition:transform .1s}
+.big:active,.pad:active{transform:scale(.93)}
+#ctl{display:flex;gap:12px;width:100%;max-width:520px;padding:10px 8px 14px}
+.pad{flex:1;min-height:64px;font-size:30px;border:0;border-radius:var(--r);background:#ffffff1c;color:var(--l);touch-action:none;transition:transform .1s}
+</style></head><body>
+<div id="top"><span>Score <b id="sc">0</b></span><span>Best <b id="bs">0</b></span><span id="lv">❤️❤️❤️</span><button id="snd">🔇 Off</button></div>
+<div id="wrap"><canvas id="cv"></canvas>
+<div id="ov"><h1 id="ot">Brick Breaker</h1><p id="om">Smash every block with the ball!<br>Keys: ← → or A D · Touch: hold the buttons or drag</p><button class="big" id="go">Play</button></div></div>
+<div id="ctl"><button class="pad" id="bl">◀</button><button class="pad" id="br">▶</button></div>
+<script>
+const cv=document.getElementById('cv'),x=cv.getContext('2d'),$=i=>document.getElementById(i);
+let W,H,dpr,held={l:0,r:0},run=0,sc=0,best=0,lives=3,lvl=1,pd,ball,bricks=[],ps=[],pops=[],shake=0,flash=0,snd=0,ac,last=0,stuck=1;
+const cols=['#ff4d8d','#ffb703','#2ec4b6','#7b5cff','#fff7ec'];
+function beep(f,d=.08,t='square'){if(!snd||!ac)return;const o=ac.createOscillator(),g=ac.createGain();o.type=t;o.frequency.value=f;g.gain.value=.06;g.gain.exponentialRampToValueAtTime(.001,ac.currentTime+d);o.connect(g);g.connect(ac.destination);o.start();o.stop(ac.currentTime+d)}
+$('snd').onclick=()=>{ac=ac||new(window.AudioContext||window.webkitAudioContext)();snd=!snd;$('snd').textContent=snd?'🔊 On':'🔇 Off';beep(660)};
+function size(){dpr=devicePixelRatio||1;const r=cv.getBoundingClientRect();W=r.width;H=r.height;cv.width=W*dpr;cv.height=H*dpr;x.setTransform(dpr,0,0,dpr,0,0);if(pd){pd.y=H-40;pd.w=Math.min(110,W*.28)}}
+function build(){bricks=[];const n=5,rows=3+Math.min(lvl,3),g=6,bw=(W-g*(n+1))/n,bh=Math.max(16,H*.04);for(let r=0;r<rows;r++)for(let c=0;c<n;c++)bricks.push({x:g+c*(bw+g),y:60+r*(bh+g),w:bw,h:bh,c:cols[r%5]})}
+function serve(){stuck=1;ball={x:pd.x,y:pd.y-12,vx:0,vy:0,r:8}}
+function start(){sc=0;lives=3;lvl=1;pd={x:W/2,y:H-40,w:Math.min(110,W*.28),h:14};build();serve();ps=[];hud();run=1;$('ov').style.display='none';last=performance.now()}
+function hud(){$('sc').textContent=sc;$('bs').textContent=best;$('lv').textContent='❤️'.repeat(lives)||'💔'}
+function burst(px,py,c,n=12){for(let i=0;i<n;i++){const a=Math.random()*6.28,s=60+Math.random()*180;ps.push({x:px,y:py,vx:Math.cos(a)*s,vy:Math.sin(a)*s,l:.6,c})}}
+function launch(){if(stuck){stuck=0;const s=Math.min(H*.7,420)+lvl*25;ball.vx=s*.3*(Math.random()<.5?-1:1);ball.vy=-s;beep(520)}}
+function over(){run=0;best=Math.max(best,sc);hud();$('ot').textContent=lives>0?'Level clear!':'Game Over';$('om').innerHTML='Score <b>'+sc+'</b> · Best <b>'+best+'</b>';$('go').textContent='Play again';$('ov').style.display='flex';beep(200,.4,'sawtooth')}
+function upd(dt){const sp=Math.max(380,W*1.1);if(held.l)pd.x-=sp*dt;if(held.r)pd.x+=sp*dt;pd.x=Math.max(pd.w/2,Math.min(W-pd.w/2,pd.x));
+if(stuck){ball.x=pd.x;ball.y=pd.y-12}else{ball.x+=ball.vx*dt;ball.y+=ball.vy*dt;
+if(ball.x<ball.r){ball.x=ball.r;ball.vx=Math.abs(ball.vx);beep(300,.04)}
+if(ball.x>W-ball.r){ball.x=W-ball.r;ball.vx=-Math.abs(ball.vx);beep(300,.04)}
+if(ball.y<ball.r){ball.y=ball.r;ball.vy=Math.abs(ball.vy);beep(300,.04)}
+if(ball.vy>0&&ball.y+ball.r>pd.y&&ball.y<pd.y+pd.h&&Math.abs(ball.x-pd.x)<pd.w/2+ball.r){const o=(ball.x-pd.x)/(pd.w/2),s=Math.hypot(ball.vx,ball.vy)*1.01;ball.vx=o*s*.8;ball.vy=-Math.sqrt(Math.max(s*s-ball.vx*ball.vx,s*s*.25));ball.y=pd.y-ball.r;beep(440,.05);burst(ball.x,pd.y,'#2ec4b6',5)}
+for(const b of bricks){if(ball.x+ball.r>b.x&&ball.x-ball.r<b.x+b.w&&ball.y+ball.r>b.y&&ball.y-ball.r<b.y+b.h){b.d=1;const ox=Math.min(ball.x+ball.r-b.x,b.x+b.w-ball.x+ball.r),oy=Math.min(ball.y+ball.r-b.y,b.y+b.h-ball.y+ball.r);if(ox<oy)ball.vx*=-1;else ball.vy*=-1;sc+=10;shake=6;burst(b.x+b.w/2,b.y+b.h/2,b.c);pops.push({x:b.x+b.w/2,y:b.y,l:.7});beep(700+Math.random()*300,.06);hud();break}}
+bricks=bricks.filter(b=>!b.d);
+if(!bricks.length){lvl++;sc+=50;beep(900,.3);build();serve();hud()}
+if(ball.y>H+20){lives--;flash=.4;shake=12;beep(150,.3,'sawtooth');hud();if(lives<=0)over();else serve()}}
+ps.forEach(p=>{p.x+=p.vx*dt;p.y+=p.vy*dt;p.vy+=300*dt;p.l-=dt});ps=ps.filter(p=>p.l>0);pops.forEach(p=>{p.y-=40*dt;p.l-=dt});pops=pops.filter(p=>p.l>0)}
+function draw(){x.save();x.clearRect(0,0,W,H);if(shake>.3){x.translate((Math.random()-.5)*shake,(Math.random()-.5)*shake);shake*=.85}
+bricks.forEach(b=>{x.fillStyle=b.c;x.beginPath();x.roundRect(b.x,b.y,b.w,b.h,6);x.fill()});
+if(pd){x.fillStyle='#fff7ec';x.beginPath();x.roundRect(pd.x-pd.w/2,pd.y,pd.w,pd.h,7);x.fill();
+x.shadowColor='#ffb703';x.shadowBlur=14;x.fillStyle='#ffb703';x.beginPath();x.arc(ball.x,ball.y,ball.r,0,6.28);x.fill();x.shadowBlur=0}
+ps.forEach(p=>{x.globalAlpha=Math.max(p.l,0);x.fillStyle=p.c;x.fillRect(p.x-2,p.y-2,4,4)});x.globalAlpha=1;
+x.fillStyle='#fff';x.font='bold 16px system-ui';x.textAlign='center';pops.forEach(p=>{x.globalAlpha=Math.max(p.l,0);x.fillText('+10',p.x,p.y)});x.globalAlpha=1;
+if(stuck&&run){x.fillStyle='#fff7ecaa';x.fillText('Tap or press Space to launch',W/2,H*.6)}
+if(flash>0){x.fillStyle='rgba(255,77,141,'+flash+')';x.fillRect(0,0,W,H);flash-=.02}
+x.restore()}
+function loop(t){const dt=Math.min((t-last)/1000,.05);last=t;if(run)upd(dt);draw();requestAnimationFrame(loop)}
+function rel(){held.l=held.r=0}
+[['bl','l'],['br','r']].forEach(([i,k])=>{const e=$(i);e.onpointerdown=ev=>{held[k]=1;e.setPointerCapture(ev.pointerId);launch()};['pointerup','pointercancel','lostpointercapture','pointerleave'].forEach(n=>e.addEventListener(n,()=>held[k]=0))});
+cv.onpointerdown=e=>{launch();mv(e)};cv.onpointermove=e=>{if(e.buttons||e.pointerType==='touch')mv(e)};
+function mv(e){if(!run)return;const r=cv.getBoundingClientRect();pd.x=e.clientX-r.left}
+addEventListener('keydown',e=>{const k=e.key;if(k=='ArrowLeft'||k=='a'||k=='A')held.l=1;if(k=='ArrowRight'||k=='d'||k=='D')held.r=1;if(k==' '){e.preventDefault();if(run)launch();else if($('ov').style.display!='none')start()}});
+addEventListener('keyup',e=>{const k=e.key;if(k=='ArrowLeft'||k=='a'||k=='A')held.l=0;if(k=='ArrowRight'||k=='d'||k=='D')held.r=0});
+addEventListener('blur',rel);document.addEventListener('visibilitychange',()=>{if(document.visibilityState=='hidden')rel()});
+addEventListener('contextmenu',e=>e.preventDefault());addEventListener('resize',size);
+$('go').onclick=()=>{ac=ac||new(window.AudioContext||window.webkitAudioContext)();start()};
+size();pd={x:W/2,y:H-40,w:Math.min(110,W*.28),h:14};build();serve();hud();requestAnimationFrame(t=>{last=t;loop(t)});
+</script></body></html>
