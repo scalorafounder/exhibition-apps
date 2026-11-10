@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data: blob:; media-src data: blob:; font-src data:; connect-src 'none'; form-action 'none'; base-uri 'none'; frame-src 'none'; object-src 'none'"><script>(function(){var n=function(){throw new Error("network is blocked in this app")};try{window.fetch=n;window.XMLHttpRequest=n;window.WebSocket=n;window.EventSource=n;window.open=function(){return null};if(navigator.sendBeacon)navigator.sendBeacon=function(){return false}}catch(e){}})();</script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Tic Tac Toe Club</title>
+<style>
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;font-family:"Comic Sans MS","Segoe Print",cursive;background:#faf7f0;color:#161a5e;
+background-image:repeating-linear-gradient(transparent 0 38px,#dde3f3 38px 40px)}
+nav{position:sticky;top:0;background:#161a5e;display:flex;gap:6px;justify-content:center;flex-wrap:wrap;padding:8px;z-index:5}
+nav a{color:#fff;text-decoration:none;padding:10px 14px;border-radius:8px;font-size:16px}
+nav a:hover{background:#3a3fa0}
+section{padding:56px 20px;max-width:760px;margin:auto;text-align:center}
+h1{font-size:clamp(34px,8vw,64px);margin:0 0 8px}
+h2{font-size:34px;margin-top:0}
+.hero{padding-top:40px}
+.board{display:grid;grid-template-columns:repeat(3,1fr);width:min(88vw,380px);margin:20px auto;aspect-ratio:1}
+.c{background:none;border:0;font:inherit;font-size:clamp(48px,16vw,96px);color:#161a5e;cursor:pointer;border-right:5px solid #222;border-bottom:5px solid #222;padding:0}
+.c:nth-child(3n){border-right:0}
+.c:nth-child(n+7){border-bottom:0}
+.c:hover{background:#e9ecfa}
+.c.w{background:#ffe27a}
+.row{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+.box{border:3px solid #222;padding:14px 20px;font:inherit;font-size:20px;background:#faf7f0;color:#161a5e;min-height:52px}
+button.box{cursor:pointer}
+button.box:hover{background:#e9ecfa}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px}
+.card{background:#fff;border:2px solid #161a5e;border-radius:12px;padding:16px}
+.big{font-size:48px}
+input{font:inherit;padding:12px;border:2px solid #161a5e;border-radius:8px;width:min(100%,280px);margin:4px}
+footer{text-align:center;padding:24px;background:#161a5e;color:#fff}
+</style>
+</head>
+<body>
+<nav><a href="#home">Home</a><a href="#about">About</a><a href="#play">Play</a><a href="#schedule">Schedule</a><a href="#gallery">Gallery</a><a href="#join">Join</a></nav>
+
+<section id="home" class="hero">
+<h1>❌ TIC TAC TOE ⭕</h1>
+<p style="font-size:20px">Welcome to the Tic Tac Toe Club – where every game is three in a row of fun!</p>
+<a class="box" href="#play" style="display:inline-block;text-decoration:none">Play now ↓</a>
+</section>
+
+<section id="about"><h2>About us</h2>
+<p>We are a friendly club of puzzle fans who meet every week to play, laugh and share tricks. Pro tip: the center square is powerful!</p></section>
+
+<section id="play"><h2>Play a game</h2>
+<div class="board" id="b"></div>
+<div class="row"><div class="box" id="s">Your turn: X</div><button class="box" id="r">RESTART</button></div>
+<p>Score — X: <b id="sx">0</b> · O: <b id="so">0</b> · Ties: <b id="st">0</b></p>
+</section>
+
+<section id="schedule"><h2>Schedule</h2>
+<div class="cards">
+<div class="card"><div class="big">📅</div><b>Monday</b><br>Beginner games, 4 pm</div>
+<div class="card"><div class="big">🏆</div><b>Wednesday</b><br>Mini tournament, 5 pm</div>
+<div class="card"><div class="big">🍪</div><b>Friday</b><br>Snacks &amp; free play, 3 pm</div>
+</div></section>
+
+<section id="gallery"><h2>Gallery</h2>
+<div class="cards">
+<div class="card big">❌⭕❌</div><div class="card big">🏅😄</div><div class="card big">📝🎲</div><div class="card big">🧠✨</div>
+</div></section>
+
+<section id="join"><h2>Join the club</h2>
+<form id="f"><input id="n" placeholder="Your first name" required><br>
+<button class="box" type="submit">Sign me up!</button></form>
+<p id="m"></p></section>
+
+<footer>Made with ❤️ by the Tic Tac Toe Club</footer>
+
+<script>
+const L=[[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
+let g,t,over,sc={X:0,O:0,T:0};
+const b=document.getElementById('b'),s=document.getElementById('s');
+for(let i=0;i<9;i++){const e=document.createElement('button');e.className='c';e.onclick=()=>mv(i);b.appendChild(e)}
+function reset(){g=Array(9).fill('');t='X';over=false;[...b.children].forEach(e=>{e.textContent='';e.classList.remove('w')});s.textContent='Your turn: X'}
+function mv(i){
+if(over||g[i])return;
+g[i]=t;b.children[i].textContent=t;
+const w=L.find(l=>l.every(k=>g[k]===t));
+if(w){over=true;w.forEach(k=>b.children[k].classList.add('w'));s.textContent=t+' wins! 🎉';sc[t]++}
+else if(g.every(x=>x)){over=true;s.textContent="It's a tie! 🤝";sc.T++}
+else{t=t==='X'?'O':'X';s.textContent='Your turn: '+t}
+sx.textContent=sc.X;so.textContent=sc.O;st.textContent=sc.T}
+r.onclick=reset;reset();
+f.onsubmit=e=>{e.preventDefault();m.textContent='Welcome, '+n.value+'! See you Monday 🎉';f.reset()}
+</script>
+</body>
+</html>
