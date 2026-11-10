@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data: blob:; media-src data: blob:; font-src data:; connect-src 'none'; form-action 'none'; base-uri 'none'; frame-src 'none'; object-src 'none'"><script>(function(){var n=function(){throw new Error("network is blocked in this app")};try{window.fetch=n;window.XMLHttpRequest=n;window.WebSocket=n;window.EventSource=n;window.open=function(){return null};if(navigator.sendBeacon)navigator.sendBeacon=function(){return false}}catch(e){}})();</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tip Calculator</title>
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;min-height:100vh;background:#e8ecf5;font-family:system-ui,Arial,sans-serif;display:flex;align-items:center;justify-content:center;color:#1b1b4b}
+.phone{width:100%;max-width:420px;min-height:100vh;background:#faf8f2;display:flex;flex-direction:column;box-shadow:0 8px 30px #0003}
+@media(min-height:760px) and (min-width:500px){.phone{min-height:720px;border-radius:28px;overflow:hidden}}
+header{background:#2d3a8c;color:#fff;padding:18px;font-size:22px;font-weight:700;text-align:center;letter-spacing:1px}
+main{flex:1;padding:18px;display:flex;flex-direction:column;gap:16px}
+.card{background:#fff;border:2px solid #1b1b4b;border-radius:14px;padding:14px}
+label{font-weight:600;display:block;margin-bottom:6px}
+.bill{display:flex;align-items:center;gap:8px;font-size:28px;font-weight:700}
+.bill input{flex:1;min-width:0;font-size:28px;border:none;border-bottom:3px solid #2d3a8c;padding:6px;background:transparent;color:inherit;outline:none}
+.tips{display:flex;gap:10px}
+.tips button{flex:1;padding:18px 0;font-size:22px;font-weight:700;border:2px solid #1b1b4b;border-radius:12px;background:#fff;color:#1b1b4b;cursor:pointer;transition:.15s}
+.tips button.on{background:#2d3a8c;color:#fff;transform:scale(1.05)}
+.ppl{display:flex;align-items:center;justify-content:space-between;font-size:20px;font-weight:600}
+.ctr{display:flex;align-items:center;gap:16px}
+.ctr button{width:52px;height:52px;border-radius:50%;border:2px solid #1b1b4b;background:#ffd95a;font-size:28px;font-weight:700;cursor:pointer}
+.ctr span{font-size:28px;min-width:30px;text-align:center;font-weight:700}
+.res{background:#2d3a8c;color:#fff;font-size:20px;line-height:2}
+.res b{float:right;font-size:26px}
+.res .big{font-size:22px;border-top:1px solid #fff5;margin-top:4px;padding-top:4px}
+.res .big b{font-size:32px;color:#ffd95a}
+nav{display:flex;border-top:1px solid #ccc;background:#fff}
+nav div{flex:1;text-align:center;padding:12px;font-size:13px;color:#2d3a8c;font-weight:600}
+</style>
+</head>
+<body>
+<div class="phone">
+<header>💸 TIP CALCULATOR</header>
+<main>
+<div class="card"><label for="bill">Bill:</label>
+<div class="bill">$<input id="bill" type="number" inputmode="decimal" min="0" step="0.01" placeholder="0.00" value="48.50"></div></div>
+<div class="card"><label>Tip:</label>
+<div class="tips"><button data-p="10">10%</button><button data-p="15" class="on">15%</button><button data-p="20">20%</button></div></div>
+<div class="card ppl">People:
+<div class="ctr"><button id="minus" aria-label="fewer">−</button><span id="n">2</span><button id="plus" aria-label="more">+</button></div></div>
+<div class="card res">
+<div>TIP: <b id="tip">$0.00</b></div>
+<div>TOTAL: <b id="tot">$0.00</b></div>
+<div class="big">EACH PAYS: <b id="each">$0.00</b></div></div>
+</main>
+<nav><div>🧮 Calculator</div></nav>
+</div>
+<script>
+let pct=15,n=2;
+const $=id=>document.getElementById(id);
+const m=v=>"$"+v.toFixed(2);
+function calc(){
+const b=Math.max(0,parseFloat($("bill").value)||0);
+const t=b*pct/100;
+$("tip").textContent=m(t);
+$("tot").textContent=m(b+t);
+$("each").textContent=m((b+t)/n);
+$("n").textContent=n;
+}
+document.querySelectorAll(".tips button").forEach(btn=>btn.onclick=()=>{
+document.querySelectorAll(".tips button").forEach(x=>x.classList.remove("on"));
+btn.classList.add("on");pct=+btn.dataset.p;calc();
+});
+$("minus").onclick=()=>{if(n>1)n--;calc()};
+$("plus").onclick=()=>{if(n<50)n++;calc()};
+$("bill").oninput=calc;
+calc();
+</script>
+</body>
+</html>
