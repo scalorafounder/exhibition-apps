@@ -1,18 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
-<head><meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data: blob:; media-src data: blob:; font-src data:; connect-src 'none'; form-action 'none'; base-uri 'none'; frame-src 'none'; object-src 'none'"><script>(function(){var n=function(){throw new Error("network is blocked in this app")};try{window.fetch=n;window.XMLHttpRequest=n;window.WebSocket=n;window.EventSource=n;window.open=function(){return null};if(navigator.sendBeacon)navigator.sendBeacon=function(){return false}}catch(e){}})();</script>
+<head><meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data: blob:; media-src data: blob:; font-src data:; connect-src 'none'; form-action 'none'; base-uri 'none'; frame-src 'none'; object-src 'none'"><script>(function(){var n=function(){throw new Error("network is blocked in this app")};try{window.fetch=n;window.XMLHttpRequest=n;window.WebSocket=n;window.EventSource=n;window.open=function(){return null};if(navigator.sendBeacon)navigator.sendBeacon=function(){return false}}catch(e){}})();</script><script>(function(){var n=function(){throw new Error("network is blocked in this app")};try{window.fetch=n;window.XMLHttpRequest=n;window.WebSocket=n;window.EventSource=n;window.open=function(){return null};if(navigator.sendBeacon)navigator.sendBeacon=function(){return false}}catch(e){}})();</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>My To-Do List Game</title>
 <style>
-body{margin:0;min-height:100vh;background:#eef3fb;font-family:"Comic Sans MS",cursive,sans-serif;color:#1a1a5e;display:flex;justify-content:center;align-items:center}
+body{margin:0;min-height:100vh;background:#bfe3ff;font-family:"Comic Sans MS",cursive,sans-serif;color:#1a1a5e;display:flex;justify-content:center;align-items:center}
 .app{width:min(420px,94vw);background:#fff;border:3px solid #222;border-radius:6px;padding:18px;box-shadow:6px 6px 0 #1a1a5e55}
 h1{margin:0 0 12px;text-align:center;font-size:28px}
 .row{display:flex;gap:8px}
 input{flex:1;font:inherit;font-size:18px;padding:10px;border:3px solid #222;border-radius:4px;min-width:0}
 button{font:inherit;cursor:pointer}
-.add{border:3px solid #222;background:#fff;color:#1a1a5e;font-size:18px;padding:0 14px;min-height:48px}
-.add:active{background:#cde}
+.add{border:3px solid #222;background:#3cb94a;color:#fff;font-weight:bold;font-size:18px;padding:0 14px;min-height:48px}
+.add:active{background:#2a8f37}
 ul{list-style:none;padding:0;margin:14px 0;min-height:150px}
 li{display:flex;align-items:center;gap:12px;padding:8px 0;font-size:22px}
 li.done span{text-decoration:line-through;opacity:.5}
@@ -50,7 +50,7 @@ const b=document.createElement("button");b.className="box";b.textContent=k.d?"âœ
 b.onclick=()=>{k.d=!k.d;score+=k.d?10:-10;check();};
 const s=document.createElement("span");s.textContent=k.t;
 const x=document.createElement("button");x.className="x";x.textContent="âœ•";
-x.onclick=()=>{if(k.d)score-=0;tasks=tasks.filter(z=>z!==k);check();};
+x.onclick=()=>{tasks=tasks.filter(z=>z!==k);check();};
 li.append(b,s,x);l.append(li);
 });
 const n=tasks.filter(k=>!k.d).length;
