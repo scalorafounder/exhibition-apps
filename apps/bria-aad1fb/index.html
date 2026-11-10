@@ -35,56 +35,77 @@ window.addEventListener('blur',releaseAll);window.addEventListener('pagehide',re
 document.addEventListener('visibilitychange',function(){if(document.hidden)releaseAll()});
 window.__xwRelease=releaseAll;
 })();</script><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>FUGGS – Play the Fuggler</title>
+<title>FUGGS – Catch the Notes</title>
 <style>
 :root{--pk:#ff8fc3;--pk2:#ff5fa8;--bl:#4cc3ff;--gr:#5be37d;--or:#ff9a2e;--dk:#2a1740;--lt:#fff6fb}
 *{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;-webkit-tap-highlight-color:transparent;box-sizing:border-box}
 html,body{touch-action:manipulation;overscroll-behavior:none;margin:0;height:100dvh;overflow:hidden}
-body{font-family:system-ui,Segoe UI,Arial,sans-serif;color:var(--lt);background:radial-gradient(circle at 70% 20%,#5a2a8a,var(--dk) 70%);display:flex;flex-direction:column;align-items:center;padding:10px;gap:8px}
-h1{margin:0;font-size:clamp(34px,8vw,56px);letter-spacing:4px;text-shadow:3px 3px 0 var(--pk2);text-decoration:underline wavy var(--or);text-underline-offset:8px}
-.top{display:flex;width:100%;max-width:640px;justify-content:space-between;align-items:center}
+body{font-family:system-ui,Segoe UI,Arial,sans-serif;color:var(--lt);background:radial-gradient(circle at 70% 20%,#5a2a8a,var(--dk) 70%);display:flex;flex-direction:column;align-items:center;padding:8px;gap:8px}
+.top{display:flex;width:100%;max-width:720px;justify-content:space-between;align-items:center;gap:8px}
+h1{margin:0;font-size:clamp(30px,7vw,48px);letter-spacing:4px;text-shadow:3px 3px 0 var(--pk2);text-decoration:underline wavy var(--or);text-underline-offset:6px}
 button{font:inherit;color:var(--dk);background:var(--lt);border:0;border-radius:18px;min-height:56px;padding:0 16px;font-weight:700;transition:transform .1s;cursor:pointer}
 button:active{transform:scale(.92)}
-#st{flex:1;width:100%;max-width:640px;min-height:0;position:relative}
-svg{width:100%;height:100%;touch-action:none}
-.part{cursor:pointer;transition:transform .12s;transform-box:fill-box;transform-origin:center}
-.hit{animation:b .3s}
-@keyframes b{40%{transform:scale(1.12) rotate(-4deg)}}
-.pads{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;width:100%;max-width:640px}
-.pads button{font-size:26px;color:#fff}
-p{margin:0;font-size:14px;opacity:.85;text-align:center}
-.heart{position:absolute;font-size:34px;pointer-events:none;animation:f 1.2s forwards}
-@keyframes f{to{transform:translateY(-120px);opacity:0}}
+.hud{display:flex;width:100%;max-width:720px;justify-content:space-between;font-weight:800;font-size:18px}
+#w{flex:1;width:100%;max-width:720px;min-height:0;position:relative;border-radius:22px;overflow:hidden;border:3px solid var(--pk2);background:#00000033}
+canvas{width:100%;height:100%;display:block;touch-action:none}
+.ov{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;background:#2a1740dd;text-align:center;padding:20px}
+.ov h2{margin:0;font-size:clamp(40px,10vw,64px);letter-spacing:4px;text-shadow:3px 3px 0var(--pk2)}
+.ov button{background:var(--pk2);color:#fff;font-size:24px;min-width:200px}
+.ctl{display:flex;gap:10px;width:100%;max-width:720px}
+.ctl button{flex:1;font-size:30px;background:var(--bl);touch-action:none}
+.hide{display:none}
+p{margin:0;font-size:14px;opacity:.9}
 </style></head><body>
 <div class="top"><h1>FUGGS</h1><button id="snd">🔇 Sound off</button></div>
-<div id="st"><svg id="sv" viewBox="0 0 400 400">
-<g stroke="#ffd36b" stroke-width="5" stroke-linecap="round"><path d="M70 90l-14-8M200 20v-14M300 40l12-10M350 100l16-6M40 170l-16-2M60 330l-14 8M340 340l14 8M200 390v10"/></g>
-<g id="body" class="part" data-n="0"><path d="M120 120C150 60 270 50 300 110 330 170 320 300 300 340 280 370 200 350 190 330 150 340 110 300 110 250 80 250 50 210 70 170 85 140 110 130 120 120Z" fill="var(--pk)" stroke="#8a2a63" stroke-width="5"/></g>
-<g id="hair" class="part" data-n="1" stroke="var(--or)" stroke-width="7" stroke-linecap="round"><path d="M170 82l-10-34M190 78l-2-40M208 78l8-38M226 84l22-30M152 90l-22-22"/></g>
-<g id="e1" class="part" data-n="2"><circle cx="165" cy="140" r="30" fill="var(--bl)" stroke="#1d5f8a" stroke-width="5"/><circle cx="165" cy="140" r="17" fill="#fff" opacity=".35"/><path d="M155 130l20 20M175 130l-20 20" stroke="#14405e" stroke-width="5"/></g>
-<g id="e2" class="part" data-n="3"><circle cx="255" cy="170" r="23" fill="var(--gr)" stroke="#1f7a37" stroke-width="5"/><path d="M247 162l16 16M263 162l-16 16" stroke="#14502a" stroke-width="5"/></g>
-<g id="mouth" class="part" data-n="4"><rect x="150" y="205" width="100" height="40" rx="20" fill="#7a1f4f" stroke="#8a2a63" stroke-width="5"/><path d="M170 210v30M190 210v30M210 210v30M230 210v30" stroke="#fff" stroke-width="10"/></g>
-<g fill="#ff5fa8" opacity=".8"><path d="M30 300c-10-14 8-24 14-10 6-14 24-4 14 10l-14 16z"/><path d="M335 230c-10-14 8-24 14-10 6-14 24-4 14 10l-14 16z"/></g>
-</svg></div>
-<div class="pads" id="pads"></div>
-<p>Tap Fuggs' hair, eyes and mouth, or the pads. Keys: A S D F G H J K</p>
+<div class="hud"><span id="sc">Score 0</span><span id="lv">❤❤❤</span><span id="bs">Best 0</span></div>
+<div id="w"><canvas id="c"></canvas>
+<div class="ov" id="ov"><h2>FUGGS</h2><p>Feed Fuggs the music notes 🎵 and dodge the 🌶️ bombs!</p><p>Move: ← → or A D, or hold the buttons</p><button id="go">Play</button></div></div>
+<div class="ctl"><button id="bl">◀</button><button id="br">▶</button></div>
 <script>
-let ac,on=false;const $=id=>document.getElementById(id);
-const sc=[261.6,293.7,329.6,392,440,523.3,587.3,659.3],cols=['#ff5fa8','#4cc3ff','#5be37d','#ff9a2e'];
-function beep(f,t='sine',d=.35){if(!on||!ac)return;const o=ac.createOscillator(),g=ac.createGain();o.type=t;o.frequency.value=f;g.gain.setValueAtTime(.3,ac.currentTime);g.gain.exponentialRampToValueAtTime(.001,ac.currentTime+d);o.connect(g);g.connect(ac.destination);o.start();o.stop(ac.currentTime+d)}
-function boop(){if(!on||!ac)return;const o=ac.createOscillator(),g=ac.createGain();o.frequency.setValueAtTime(300,ac.currentTime);o.frequency.exponentialRampToValueAtTime(80,ac.currentTime+.3);g.gain.setValueAtTime(.4,ac.currentTime);g.gain.exponentialRampToValueAtTime(.001,ac.currentTime+.3);o.connect(g);g.connect(ac.destination);o.start();o.stop(ac.currentTime+.3)}
+const $=id=>document.getElementById(id),cv=$('c'),x=cv.getContext('2d');
+let ac,on=false,W=0,H=0,run=false,sc=0,best=0,lives=3,t=0,sh=0,fl=0,it=[],pa=[],pp=[],last=0,sp=0;
+const held={left:false,right:false},F={x:0,v:0};
+function rs(){const r=cv.getBoundingClientRect(),d=devicePixelRatio||1;W=r.width;H=r.height;cv.width=W*d;cv.height=H*d;x.setTransform(d,0,0,d,0,0)}
+addEventListener('resize',rs);rs();F.x=W/2;
+function beep(f,ty='sine',d=.2){if(!on||!ac)return;const o=ac.createOscillator(),g=ac.createGain();o.type=ty;o.frequency.value=f;g.gain.setValueAtTime(.25,ac.currentTime);g.gain.exponentialRampToValueAtTime(.001,ac.currentTime+d);o.connect(g);g.connect(ac.destination);o.start();o.stop(ac.currentTime+d)}
 $('snd').onclick=()=>{ac=ac||new(window.AudioContext||window.webkitAudioContext)();on=!on;if(ac.state=='suspended')ac.resume();$('snd').textContent=on?'🔊 Sound on':'🔇 Sound off';beep(660)};
-function pop(el,x,y){el.classList.remove('hit');void el.getBBox;el.classList.add('hit');const h=document.createElement('div');h.className='heart';h.textContent=['💖','✨','💚','💙'][Math.random()*4|0];h.style.left=x+'px';h.style.top=y+'px';$('st').appendChild(h);setTimeout(()=>h.remove(),1200)}
-const pr=$('st');
-const parts={0:[0],1:[7],2:[2],3:[4],4:[1]};
-document.querySelectorAll('.part').forEach(p=>p.addEventListener('pointerdown',e=>{
-const r=pr.getBoundingClientRect(),n=+p.dataset.n;
-if(n==0)boop();else if(n==4){beep(200,'sawtooth',.3);beep(300,'square',.2)}else beep([0,880,523.3,659.3,0][n],n==1?'triangle':'sine');
-if(n==1)setTimeout(()=>beep(1046,'triangle',.2),90);
-pop(p,e.clientX-r.left,e.clientY-r.top)}));
-const keys='asdfghjk',pd=$('pads');
-sc.forEach((f,i)=>{const b=document.createElement('button');b.textContent=['🎀','🍬','🫧','⭐','🌈','🎈','🍭','🔔'][i];b.style.background=cols[i%4];b.onpointerdown=()=>{beep(f,i%2?'triangle':'sine');pop(document.getElementById('hair'),pr.clientWidth/2,pr.clientHeight/3)};pd.appendChild(b)});
-pd.style.gridTemplateColumns='repeat(4,1fr)';
-addEventListener('keydown',e=>{const i=keys.indexOf(e.key.toLowerCase());if(i>=0&&!e.repeat){pd.children[i].dispatchEvent(new Event('pointerdown'));pd.children[i].animate([{transform:'scale(.85)'},{transform:'scale(1)'}],150)}});
+function hold(id,k){const b=$(id),s=()=>held[k]=false;b.addEventListener('pointerdown',e=>{held[k]=true;try{b.setPointerCapture(e.pointerId)}catch(_){}});['pointerup','pointercancel','lostpointercapture','pointerleave'].forEach(n=>b.addEventListener(n,s))}
+hold('bl','left');hold('br','right');
+function clr(){held.left=held.right=false}
+addEventListener('blur',clr);document.addEventListener('visibilitychange',()=>{if(document.visibilityState=='hidden')clr()});
 addEventListener('contextmenu',e=>e.preventDefault());
+const km={ArrowLeft:'left',a:'left',A:'left',ArrowRight:'right',d:'right',D:'right'};
+addEventListener('keydown',e=>{if(km[e.key]){held[km[e.key]]=true;e.preventDefault()}if(e.key==' '&&!run){start();e.preventDefault()}});
+addEventListener('keyup',e=>{if(km[e.key])held[km[e.key]]=false});
+cv.addEventListener('pointerdown',e=>{cv.dragging=true;mv(e)});cv.addEventListener('pointermove',e=>{if(cv.dragging)mv(e)});
+['pointerup','pointercancel','pointerleave'].forEach(n=>cv.addEventListener(n,()=>cv.dragging=false));
+function mv(e){const r=cv.getBoundingClientRect();F.x=Math.max(50,Math.min(W-50,e.clientX-r.left))}
+function start(){sc=0;lives=3;t=0;it=[];pa=[];pp=[];sp=0;F.x=W/2;run=true;$('ov').classList.add('hide');hud();last=performance.now();beep(523);beep(784,'triangle',.3)}
+$('go').onclick=start;
+function hud(){$('sc').textContent='Score '+sc;$('lv').textContent='❤'.repeat(Math.max(lives,0))+'🖤'.repeat(3-Math.max(lives,0));$('bs').textContent='Best '+best}
+function boom(px,py,c,n=12){for(let i=0;i<n;i++)pa.push({x:px,y:py,vx:(Math.random()-.5)*300,vy:(Math.random()-.8)*300,l:.7,c})}
+function over(){run=false;best=Math.max(best,sc);hud();$('ov').innerHTML='<h2>Game Over</h2><p style="font-size:22px">Score '+sc+' · Best '+best+'</p><p>Fuggs is full of music! 🎶</p><button id="go">Play again</button>';$('go').onclick=start;$('ov').classList.remove('hide');beep(150,'sawtooth',.5)}
+const nt=[261.6,329.6,392,523.3,659.3],em=['🎵','🎶','🍬','⭐'];
+function fug(){const px=F.x,py=H-60,s=1+fl*.2;x.save();x.translate(px,py+(sh?Math.sin(t*60)*2:0));x.scale(s,s);
+x.strokeStyle='#8a2a63';x.lineWidth=4;x.fillStyle='#ff8fc3';x.beginPath();x.ellipse(0,0,46,48,0,0,7);x.fill();x.stroke();
+x.strokeStyle='#ff9a2e';x.lineWidth=5;x.lineCap='round';for(let i=-2;i<=2;i++){x.beginPath();x.moveTo(i*8,-44);x.lineTo(i*12,-62-Math.abs(i)*-4);x.stroke()}
+x.strokeStyle='#14405e';x.lineWidth=3;x.fillStyle='#4cc3ff';x.beginPath();x.arc(-16,-12,15,0,7);x.fill();x.stroke();x.beginPath();x.moveTo(-22,-18);x.lineTo(-10,-6);x.moveTo(-10,-18);x.lineTo(-22,-6);x.stroke();
+x.fillStyle='#5be37d';x.beginPath();x.arc(18,-6,11,0,7);x.fill();x.stroke();x.beginPath();x.moveTo(13,-11);x.lineTo(23,-1);x.moveTo(23,-11);x.lineTo(13,-1);x.stroke();
+x.fillStyle='#7a1f4f';x.beginPath();x.roundRect(-22,16,44,fl>0?24:16,8);x.fill();x.fillStyle='#fff';x.fillRect(-14,17,6,8);x.fillRect(-3,17,6,8);x.fillRect(8,17,6,8);x.restore()}
+function loop(n){requestAnimationFrame(loop);const dt=Math.min((n-last)/1000||0,.05);last=n;
+if(run){t+=dt;const d=(held.right?1:0)-(held.left?1:0);F.x=Math.max(50,Math.min(W-50,F.x+d*460*dt));
+sp-=dt;if(sp<=0){sp=Math.max(.3,.9-t*.012);const b=Math.random()<.25+Math.min(.2,t*.003);it.push({x:30+Math.random()*(W-60),y:-20,v:120+t*4+Math.random()*60,b,e:b?'🌶️':em[Math.random()*4|0],n:Math.random()*5|0})}
+it.forEach(o=>o.y+=o.v*dt);
+for(const o of it){if(Math.abs(o.x-F.x)<50&&Math.abs(o.y-(H-60))<45){o.d=1;if(o.b){lives--;sh=.3;boom(o.x,o.y,'#ff5f3a',20);beep(120,'sawtooth',.3)}else{sc+=10;fl=.2;boom(o.x,o.y,'#ffd36b');beep(nt[o.n],'triangle');pp.push({x:o.x,y:o.y-30,l:.8})}hud()}
+else if(o.y>H+20){o.d=1;if(!o.b){lives--;sh=.2;beep(100,'square',.2);hud()}}}
+it=it.filter(o=>!o.d);if(lives<=0)over()}
+sh=Math.max(0,sh-dt);fl=Math.max(0,fl-dt);
+x.save();x.clearRect(0,0,W,H);if(sh>0)x.translate((Math.random()-.5)*10,(Math.random()-.5)*10);
+if(sh>0.1){x.fillStyle='#ff000033';x.fillRect(-10,-10,W+20,H+20)}
+x.font='34px serif';x.textAlign='center';it.forEach(o=>x.fillText(o.e,o.x,o.y));
+fug();
+pa.forEach(p=>{p.x+=p.vx*dt;p.y+=p.vy*dt;p.vy+=600*dt;p.l-=dt;x.globalAlpha=Math.max(p.l,0);x.fillStyle=p.c;x.fillRect(p.x,p.y,6,6)});x.globalAlpha=1;pa=pa.filter(p=>p.l>0);
+x.fillStyle='#fff';x.font='bold 22px system-ui';pp.forEach(p=>{p.y-=40*dt;p.l-=dt;x.globalAlpha=Math.max(p.l,0);x.fillText('+10',p.x,p.y)});x.globalAlpha=1;pp=pp.filter(p=>p.l>0);
+x.restore()}
+requestAnimationFrame(loop);
 </script></body></html>
