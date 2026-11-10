@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data: blob:; media-src data: blob:; font-src data:; connect-src 'none'; form-action 'none'; base-uri 'none'; frame-src 'none'; object-src 'none'"><script>(function(){var n=function(){throw new Error("network is blocked in this app")};try{window.fetch=n;window.XMLHttpRequest=n;window.WebSocket=n;window.EventSource=n;window.open=function(){return null};if(navigator.sendBeacon)navigator.sendBeacon=function(){return false}}catch(e){}})();</script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Study Timer - Calm Music Studio</title>
+<style>
+body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;background:#faf6ee;font-family:"Comic Sans MS",cursive,sans-serif;color:#1a1a5e}
+.app{width:min(92vw,380px);border:3px solid #222;border-radius:14px;padding:18px;background:#fffdf8;text-align:center;box-shadow:6px 6px 0 #c9cdf0}
+h1{margin:0 0 8px;font-size:28px;letter-spacing:2px}
+.ring{position:relative;width:260px;height:260px;margin:8px auto}
+canvas{position:absolute;inset:0;width:100%;height:100%;border-radius:50%}
+#time{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:56px;font-weight:bold}
+.row{display:flex;gap:12px;margin:14px 0}
+button{flex:1;padding:16px;font-size:22px;font-family:inherit;color:#1a1a5e;background:#fff;border:3px solid #222;border-radius:8px;cursor:pointer}
+button:active{transform:scale(.96)}
+#start{background:#d7f5dc}
+.pads{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:8px 0}
+.pads button{padding:14px 0;font-size:20px;border-width:2px}
+small{display:block;margin-top:4px;opacity:.7}
+</style>
+</head>
+<body>
+<div class="app">
+<h1>STUDY TIMER</h1>
+<div class="ring"><canvas id="c" width="260" height="260"></canvas><div id="time">25:00</div></div>
+<div class="row"><button id="start">START</button><button id="reset">RESET</button></div>
+<div id="sess" style="font-size:20px">Sessions done: 0</div>
+<small>Chill pads - tap to play a note 🎵</small>
+<div class="pads" id="pads"></div>
+</div>
+<script>
+const TOTAL=1500;let left=TOTAL,run=false,iv=null,sessions=0,ac=null;
+const c=document.getElementById('c'),x=c.getContext('2d');
+const t=document.getElementById('time'),sb=document.getElementById('start');
+function audio(){if(!ac)ac=new (window.AudioContext||window.webkitAudioContext)();if(ac.state==='suspended')ac.resume();return ac}
+function note(f,d=0.6,type='sine'){const a=audio(),o=a.createOscillator(),g=a.createGain();o.type=type;o.frequency.value=f;g.gain.setValueAtTime(.3,a.currentTime);g.gain.exponentialRampToValueAtTime(.001,a.currentTime+d);o.connect(g);g.connect(a.destination);o.start();o.stop(a.currentTime+d)}
+function draw(){x.clearRect(0,0,260,260);x.lineWidth=14;x.strokeStyle='#e4e6f8';x.beginPath();x.arc(130,130,115,0,7);x.stroke();
+const p=(TOTAL-left)/TOTAL;x.strokeStyle='#6c63ff';x.lineCap='round';x.beginPath();x.arc(130,130,115,-Math.PI/2,-Math.PI/2+p*Math.PI*2);x.stroke();
+const m=String(Math.floor(left/60)).padStart(2,'0'),s=String(left%60).padStart(2,'0');t.textContent=m+':'+s;document.title=m+':'+s+' Study Timer'}
+function tick(){left--;if(left<=0){left=0;stop();sessions++;document.getElementById('sess').textContent='Sessions done: '+sessions;[523,659,784,1047].forEach((f,i)=>setTimeout(()=>note(f,.8),i*250));left=TOTAL}draw()}
+function stop(){run=false;clearInterval(iv);sb.textContent='START'}
+sb.onclick=()=>{audio();if(run){stop()}else{run=true;sb.textContent='PAUSE';note(440,.3);iv=setInterval(tick,1000)}draw()};
+document.getElementById('reset').onclick=()=>{stop();left=TOTAL;draw()};
+['C','D','E','G','A','C²','E²','G²'].forEach((n,i)=>{const f=[262,294,330,392,440,523,659,784][i];const b=document.createElement('button');b.textContent=n;b.style.background=`hsl(${i*40+200},70%,90%)`;b.onclick=()=>note(f,1,'triangle');document.getElementById('pads').appendChild(b)});
+draw();
+</script>
+</body>
+</html>
