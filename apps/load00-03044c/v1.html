@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data: blob:; media-src data: blob:; font-src data:; connect-src 'none'; form-action 'none'; base-uri 'none'; frame-src 'none'; object-src 'none'"><script>(function(){var n=function(){throw new Error("network is blocked in this app")};try{window.fetch=n;window.XMLHttpRequest=n;window.WebSocket=n;window.EventSource=n;window.open=function(){return null};if(navigator.sendBeacon)navigator.sendBeacon=function(){return false}}catch(e){}})();</script><style data-xw="1">*{-webkit-user-select:none!important;user-select:none!important;-webkit-touch-callout:none!important;-webkit-tap-highlight-color:transparent!important}
+input,textarea,[contenteditable="true"],[contenteditable=""]{-webkit-user-select:text!important;user-select:text!important}
+html,body{touch-action:manipulation;overscroll-behavior:none}
+button,a,[role=button],select,summary,label{touch-action:manipulation}
+canvas{touch-action:none}
+img,svg{-webkit-user-drag:none;user-drag:none}</style><script data-xw="1">(function(){
+var held={},keys={},tn=/^(BUTTON|CANVAS)$/,ctl=/(^|[^a-z])(btn|button|ctrl|control|pad|key|arrow|dpad|left|right|up|down|jump|fire|shoot|move|hold)([^a-z]|$)/i;
+function isCtl(e){try{if(!e||e.nodeType!==1)return false;if(tn.test(e.tagName)||e.getAttribute('role')==='button')return true;return ctl.test((e.id||'')+' '+(typeof e.className==='string'?e.className:''))}catch(x){return false}}
+function noScroll(e){try{if(isCtl(e))e.style.setProperty('touch-action','none')}catch(x){}}
+// elements that listen for presses get touch-action:none, so holding or sliding never scrolls or zooms
+try{var add=EventTarget.prototype.addEventListener;EventTarget.prototype.addEventListener=function(t){if(t==='pointerdown'||t==='touchstart'||t==='mousedown')noScroll(this);return add.apply(this,arguments)}}catch(x){}
+function scan(){try{var l=document.querySelectorAll('[onpointerdown],[ontouchstart],[onmousedown],button,canvas');for(var i=0;i<l.length;i++){var e=l[i];if(e.hasAttribute('onpointerdown')||e.hasAttribute('ontouchstart')||e.hasAttribute('onmousedown')||e.tagName==='CANVAS')noScroll(e)}}catch(x){}}
+document.addEventListener('DOMContentLoaded',scan);window.addEventListener('load',scan);
+document.addEventListener('contextmenu',function(e){e.preventDefault()},true);
+document.addEventListener('selectstart',function(e){var t=e.target&&e.target.nodeType===1?e.target:e.target&&e.target.parentElement;if(t&&/^(INPUT|TEXTAREA)$/.test(t.tagName)||t&&t.isContentEditable)return;e.preventDefault()},true);
+document.addEventListener('dragstart',function(e){e.preventDefault()},true);
+function fire(el,type,id,pt){try{var o={bubbles:true,cancelable:true,composed:true,pointerId:id,pointerType:pt||'touch',isPrimary:true,view:window};
+if(type.indexOf('pointer')===0&&window.PointerEvent)el.dispatchEvent(new PointerEvent(type,o));
+else if(type.indexOf('mouse')===0)el.dispatchEvent(new MouseEvent(type,{bubbles:type!=='mouseleave',cancelable:true,view:window}));
+else if(type.indexOf('touch')===0&&window.TouchEvent)el.dispatchEvent(new TouchEvent(type,{bubbles:true,cancelable:true}))}catch(x){}}
+function release(id){var h=held[id];if(!h)return;delete held[id];var el=h.el;if(!el||!el.isConnected)return;
+['pointerup','pointerout','pointerleave'].forEach(function(t){fire(el,t,id,h.pt)});['mouseup','mouseout','mouseleave'].forEach(function(t){fire(el,t,id,h.pt)});fire(el,'touchend',id,h.pt)}
+function releaseAll(){Object.keys(held).forEach(release);Object.keys(keys).forEach(function(k){var h=keys[k];delete keys[k];try{(document.activeElement||document.body).dispatchEvent(new KeyboardEvent('keyup',{key:h.key,code:h.code,keyCode:h.kc,which:h.kc,bubbles:true,cancelable:true}))}catch(x){}})}
+window.addEventListener('pointerdown',function(e){held[e.pointerId]={el:e.target,pt:e.pointerType}},true);
+window.addEventListener('pointerup',function(e){var h=held[e.pointerId];if(!h)return;if(h.el===e.target||e.pointerType==='touch'&&h.el.contains&&h.el.contains(e.target)){delete held[e.pointerId]}else release(e.pointerId)},true);
+window.addEventListener('pointercancel',function(e){setTimeout(function(){release(e.pointerId)},0)},true);
+window.addEventListener('lostpointercapture',function(e){setTimeout(function(){release(e.pointerId)},30)},true);
+window.addEventListener('mousedown',function(e){if(!held.mouse)held.mouse={el:e.target,pt:'mouse'}},true);
+window.addEventListener('mouseup',function(e){var h=held.mouse;if(!h)return;if(h.el!==e.target){release('mouse')}else delete held.mouse},true);
+window.addEventListener('touchcancel',function(){setTimeout(function(){Object.keys(held).forEach(release)},0)},true);
+window.addEventListener('keydown',function(e){if(e.key)keys[e.code||e.key]={key:e.key,code:e.code,kc:e.keyCode}},true);
+window.addEventListener('keyup',function(e){delete keys[e.code||e.key]},true);
+window.addEventListener('blur',releaseAll);window.addEventListener('pagehide',releaseAll);
+document.addEventListener('visibilitychange',function(){if(document.hidden)releaseAll()});
+window.__xwRelease=releaseAll;
+})();</script><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no"><title>Task Catcher</title>
+<style>
+*{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;-webkit-tap-highlight-color:transparent;box-sizing:border-box}
+html,body{touch-action:manipulation;overscroll-behavior:none;margin:0;height:100%;overflow:hidden}
+:root{--bg:#faf6ee;--ink:#1c1b5e;--a:#2f6fed;--b:#ff7a59;--c:#2fbf8f;--d:#ffd23f;--r:16px}
+body{font-family:"Segoe Print","Comic Sans MS",system-ui,sans-serif;color:var(--ink);background:repeating-linear-gradient(var(--bg) 0 38px,#d8dcf0 38px 40px);display:flex;flex-direction:column;height:100dvh}
+#top{display:flex;align-items:center;gap:8px;padding:8px 12px;font-size:18px;font-weight:700}
+#top h1{margin:0;font-size:20px;flex:1}
+#top button{min-height:44px;min-width:44px;border:2px solid var(--ink);background:#fff;border-radius:12px;font-size:20px}
+#w{flex:1;position:relative;min-height:0}
+canvas{position:absolute;inset:0;width:100%;height:100%;touch-action:none;display:block}
+#ov{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;background:rgba(250,246,238,.9);text-align:center;padding:20px}
+#ov h2{font-size:clamp(28px,7vw,48px);margin:0}
+#ov p{margin:0;font-size:18px}
+.big{min-height:64px;padding:0 40px;font-size:26px;border:3px solid var(--ink);background:var(--b);color:#fff;border-radius:var(--r);font-family:inherit;font-weight:700;transition:transform .1s;box-shadow:0 5px 0 var(--ink)}
+.big:active,#ct button:active{transform:scale(.93)}
+#ct{display:flex;gap:12px;padding:10px 12px}
+#ct button{flex:1;min-height:64px;font-size:30px;border:3px solid var(--ink);background:var(--a);color:#fff;border-radius:var(--r);touch-action:none;transition:transform .1s}
+.hid{display:none!important}
+</style></head><body>
+<div id="top"><h1>📝 Task Catcher</h1><span id="hud">0 ❤️3</span><button id="snd">🔇</button></div>
+<div id="w"><canvas id="c"></canvas>
+<div id="ov"><h2>MY TO-DO LIST</h2><p>Catch the ✅ tasks, dodge the ❌ ones!<br>Use ◀ ▶ buttons or arrow keys / A D</p><p id="bs">Best: 0</p><button class="big" id="go">Play</button></div></div>
+<div id="ct"><button id="L">◀</button><button id="R">▶</button></div>
+<script>
+const c=document.getElementById('c'),x=c.getContext('2d'),ov=document.getElementById('ov'),hud=document.getElementById('hud');
+let W,H,dpr,held={l:0,r:0},run=0,score=0,lives=3,best=0,px,items=[],ps=[],shake=0,flash=0,t=0,sp=1,spawn=0,snd=0,ac;
+const tasks=['buy milk','math homework','call grandma','walk dog','read book','clean room'];
+function rs(){dpr=devicePixelRatio||1;W=c.clientWidth;H=c.clientHeight;c.width=W*dpr;c.height=H*dpr;x.setTransform(dpr,0,0,dpr,0,0)}
+addEventListener('resize',rs);rs();px=W/2;
+document.addEventListener('contextmenu',e=>e.preventDefault());
+function beep(f,d=.1,ty='square'){if(!snd||!ac)return;const o=ac.createOscillator(),g=ac.createGain();o.type=ty;o.frequency.value=f;g.gain.value=.08;g.gain.exponentialRampToValueAtTime(.001,ac.currentTime+d);o.connect(g);g.connect(ac.destination);o.start();o.stop(ac.currentTime+d)}
+document.getElementById('snd').onclick=e=>{ac=ac||new(window.AudioContext||window.webkitAudioContext)();snd=!snd;e.target.textContent=snd?'🔊':'🔇';beep(660)};
+function hold(id,k){const b=document.getElementById(id);b.addEventListener('pointerdown',e=>{held[k]=1;b.setPointerCapture(e.pointerId)});['pointerup','pointercancel','lostpointercapture','pointerleave'].forEach(v=>b.addEventListener(v,()=>held[k]=0))}
+hold('L','l');hold('R','r');
+function clr(){held.l=held.r=0}
+addEventListener('blur',clr);document.addEventListener('visibilitychange',()=>{if(document.hidden)clr()});
+addEventListener('keydown',e=>{const k=e.key.toLowerCase();if(k=='arrowleft'||k=='a')held.l=1;if(k=='arrowright'||k=='d')held.r=1;if(k==' '&&!run)start();if(k.startsWith('arrow')||k==' ')e.preventDefault()});
+addEventListener('keyup',e=>{const k=e.key.toLowerCase();if(k=='arrowleft'||k=='a')held.l=0;if(k=='arrowright'||k=='d')held.r=0});
+c.addEventListener('pointermove',e=>{if(run&&e.pointerType!='mouse'||e.buttons)px=e.offsetX});
+function start(){score=0;lives=3;items=[];ps=[];sp=1;spawn=0;px=W/2;run=1;ov.classList.add('hid');upd();beep(520)}
+document.getElementById('go').onclick=()=>{ac=ac||new(window.AudioContext||window.webkitAudioContext)();start()};
+function upd(){hud.textContent=score+' ❤️'.repeat(0)+' '+'❤️'.repeat(Math.max(lives,0))}
+function burst(X,Y,col){for(let i=0;i<14;i++){const a=Math.random()*6.28,s=60+Math.random()*160;ps.push({x:X,y:Y,vx:Math.cos(a)*s,vy:Math.sin(a)*s,l:.6,col})}}
+function end(){run=0;best=Math.max(best,score);ov.classList.remove('hid');ov.querySelector('h2').textContent='Game Over';ov.querySelector('p').innerHTML='You finished <b>'+score+'</b> tasks!';document.getElementById('bs').textContent='Best: '+best;document.getElementById('go').textContent='Play again';beep(150,.5,'sawtooth')}
+let last=performance.now();
+function loop(n){requestAnimationFrame(loop);const dt=Math.min((n-last)/1e3,.05);last=n;t+=dt;
+if(run){px+=((held.r?1:0)-(held.l?1:0))*W*.9*dt;px=Math.max(50,Math.min(W-50,px));sp+=dt*.03;spawn-=dt;
+if(spawn<=0){spawn=Math.max(.35,.9/sp);const bad=Math.random()<.3;items.push({x:40+Math.random()*(W-80),y:-30,bad,t:tasks[Math.random()*6|0],v:(110+Math.random()*60)*sp})}
+items.forEach(i=>i.y+=i.v*dt);
+const py=H-50;
+items=items.filter(i=>{if(Math.abs(i.x-px)<60&&Math.abs(i.y-py)<30){if(i.bad){lives--;shake=.3;flash=.25;burst(i.x,i.y,'#ff7a59');beep(120,.25,'sawtooth');if(lives<=0)end()}else{score++;burst(i.x,i.y,'#2fbf8f');beep(600+score%8*60,.08)}upd();return 0}
+if(i.y>H+30){return 0}return 1})}
+ps.forEach(p=>{p.x+=p.vx*dt;p.y+=p.vy*dt;p.l-=dt});ps=ps.filter(p=>p.l>0);shake=Math.max(0,shake-dt);flash=Math.max(0,flash-dt);
+x.save();x.clearRect(0,0,W,H);if(shake>0)x.translate((Math.random()-.5)*14,(Math.random()-.5)*14);
+x.textAlign='center';x.font='bold 16px "Segoe Print",system-ui';
+items.forEach(i=>{x.font='30px serif';x.fillText(i.bad?'❌':'✅',i.x,i.y);x.font='bold 14px "Segoe Print",system-ui';x.fillStyle=i.bad?'#ff7a59':'#1c1b5e';x.fillText(i.t,i.x,i.y+22)});
+const py=H-50;x.fillStyle='#fff';x.strokeStyle='#1c1b5e';x.lineWidth=3;x.beginPath();x.roundRect(px-48,py-6,96,34,10);x.fill();x.stroke();x.fillStyle='#1c1b5e';x.font='bold 15px system-ui';x.fillText('📋 LIST',px,py+17);
+ps.forEach(p=>{x.globalAlpha=p.l/.6;x.fillStyle=p.col;x.fillRect(p.x,p.y,6,6)});x.globalAlpha=1;
+if(flash>0){x.fillStyle='rgba(255,60,60,'+flash+')';x.fillRect(0,0,W,H)}
+x.restore()}
+requestAnimationFrame(loop);
+</script></body></html>
