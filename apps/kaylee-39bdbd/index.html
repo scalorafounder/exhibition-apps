@@ -41,86 +41,85 @@ window.__xwRelease=releaseAll;
 *{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;-webkit-tap-highlight-color:transparent;box-sizing:border-box}
 html,body{touch-action:manipulation;overscroll-behavior:none;margin:0;height:100%;overflow:hidden}
 body{font-family:system-ui,Segoe UI,Arial,sans-serif;color:var(--l);background:radial-gradient(circle at 20% 10%,var(--bg2),var(--bg) 70%);height:100dvh;display:flex;flex-direction:column;align-items:center;padding:12px;gap:10px}
-header{display:flex;width:100%;max-width:640px;justify-content:space-between;align-items:center}
+header{display:flex;width:100%;max-width:640px;justify-content:space-between;align-items:center;gap:6px}
 h1{font-size:1.5rem;margin:0}
 .pill{background:#ffffff1f;border-radius:99px;padding:8px 14px;font-weight:700;min-height:40px;border:0;color:var(--l);font-size:1rem}
 button{font:inherit;color:var(--l);cursor:pointer;transition:transform .12s,background .2s}
 button:active{transform:scale(.95)}
 main{flex:1;width:100%;max-width:640px;display:flex;flex-direction:column;gap:12px;min-height:0}
 .box{flex:1;min-height:120px;border-radius:var(--r);border:3px solid var(--b);background:#0006;position:relative;overflow:hidden;box-shadow:0 0 30px #38e1ff44}
-canvas{width:100%;height:100%;display:block}
+canvas{width:100%;height:100%;display:block;touch-action:none}
 #q{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:5rem;color:var(--a);pointer-events:none;transition:opacity .4s}
-.row{display:flex;gap:10px}
 .go{flex:1;min-height:60px;border:0;border-radius:var(--r);background:var(--c);color:#222;font-weight:800;font-size:1.1rem}
 .opts{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .o{min-height:64px;border-radius:var(--r);border:2px solid #ffffff44;background:#ffffff14;font-size:1rem;font-weight:700;display:flex;align-items:center;gap:10px;padding:8px 12px;text-align:left}
 .o b{background:var(--a);border-radius:10px;width:32px;height:32px;display:flex;align-items:center;justify-content:center;flex:none}
+.o small{display:block;font-weight:400;opacity:.7;font-size:.75rem}
 .o.ok{background:var(--ok);color:#052;border-color:var(--ok)}.o.bad{background:var(--bad);border-color:var(--bad)}
 #msg{text-align:center;min-height:26px;font-weight:700}
 #end{position:fixed;inset:0;background:#140d2bee;display:none;flex-direction:column;align-items:center;justify-content:center;gap:14px;text-align:center;padding:20px}
 #end .go{flex:none;width:240px}
-@media(max-width:420px){.o{font-size:.85rem}}
+@media(max-width:420px){.o{font-size:.85rem}h1{font-size:1.2rem}}
 </style></head><body>
-<header><h1>🎵 Guess the Song?</h1><div><button class="pill" id="snd">🔇 Sound off</button></div></header>
+<header><h1>🎵 Guess the Song?</h1><button class="pill" id="snd">🔇 Sound off</button></header>
 <header><span class="pill" id="sc">Score 0</span><span class="pill" id="rd">Round 1/8</span><span class="pill" id="bs">Best 0</span></header>
 <main>
 <div class="box"><canvas id="cv"></canvas><div id="q">?</div></div>
-<div id="msg">Press Play to hear a tune!</div>
-<div class="row"><button class="go" id="play">▶ Play song</button></div>
+<div id="msg">Press Play to hear a hit! Keys: A–F, Space = replay</div>
+<button class="go" id="play">▶ Start & play</button>
 <div class="opts" id="opts"></div>
 </main>
 <div id="end"><div style="font-size:4rem">🏆</div><h1 id="et"></h1><div id="es"></div><button class="go" id="again">Play again</button></div>
 <script>
-const N={C:261.6,D:293.7,E:329.6,F:349.2,G:392,A:440,B:493.9,c:523.3,d:587.3,e:659.3,g:784,f:698.5};
+const N={C:261.6,D:293.7,E:329.6,F:349.2,G:392,A:440,B:493.9,c:523.3,d:587.3,e:659.3,f:698.5,g:784,a:880,b:987.8,"e-":622.3,"B-":466.2,"A-":415.3,"F#":370,"G#":415.3,"D#":311.1,"C#":277.2,"c#":554.4,"f#":740};
 const S=[
-["Twinkle Twinkle","C C G G A A G-F F E E D D C-",.4],
-["Happy Birthday","G G A G c B-G G A G d c-",.4],
-["Ode to Joy","E E F G G F E D C C D E E D D-",.35],
-["Mary Had a Little Lamb","E D C D E E E-D D D-E G G-",.4],
-["Jingle Bells","E E E-E E E-E G C D E-",.3],
-["Frère Jacques","C D E C C D E C E F G-E F G-",.35],
-["Row Row Row Your Boat","C C C D E-E D E F G-",.4],
-["Careless Whisper Riff","A G E D E-A G E D E G-",.4],
-["Fur Elise","e d e d e B d c A-",.3],
-["Amazing Grace","G c e c e d c A G-",.4],
-["Old MacDonald","G G G D E E D-B B A A G-",.35],
-["Silent Night","G A G E-G A G E-d d B-c c G-",.5]];
-let ac,on=false,t=[],sc=0,r=0,cur,ans=false,best=0,playing=false,tm=[],an=0,lvl=0;
+["Seven Nation Army","The White Stripes","e e g e c B-",.35,"E E G E C B"],
+["Smoke on the Water","Deep Purple","E G A E G A- A",.35,"E G A E G A# A"],
+["Another One Bites the Dust","Queen","A A A A C D-",.3,"A A A A c A"],
+["Billie Jean","Michael Jackson","F# F# D# F# C# D#",.3,""],
+["Imagine","John Lennon","C E G E C E G c",.45,""],
+["Let It Be","The Beatles","E D C G A A G E D C D E",.4,""],
+["Take On Me","a-ha","F# F# D D B- B- E- E- E- G# G# A- B- A- A- A-",.2,""],
+["Super Mario Theme","Nintendo","e e e c e g",.22,""],
+["Hedwig's Theme","John Williams","B e g f# e b a f#",.4,""],
+["Fur Elise","Beethoven","e d# e d# e B d c A",.28,""],
+["Under the Bridge","Red Hot Chili Peppers","D A G A",.4,""],
+["Star Wars Theme","John Williams","G G G c g f e d c g f e d c g f e f d",.28,""]];
+const M={"d#":N["D#"]*2,"A-":N["A-"],"c#":N["c#"],"f#":N["f#"],"B-":N["B-"],"E-":N["e-"]/2,"e-":N["e-"],"D-":N.D,"F#":N["F#"],"G#":N["G#"],"D#":N["D#"],"C#":N["C#"]};
+S.forEach(s=>s[2]=s[2].split(/\s+/).map(k=>M[k]||N[k]||N[k[0]]||440));
+let ac,on=false,t=[],sc=0,r=0,cur,ans=false,best=0,playing=false,tm=[],pl=[],order=[];
 const $=i=>document.getElementById(i),cv=$("cv"),x=cv.getContext("2d");
+function ensure(){if(!ac)ac=new(window.AudioContext||window.webkitAudioContext)();if(ac.state=="suspended")ac.resume()}
 function beep(f,d,ty="triangle",v=.15,at=0){if(!ac)return;const o=ac.createOscillator(),g=ac.createGain();o.type=ty;o.frequency.value=f;o.connect(g);g.connect(ac.destination);const s=ac.currentTime+at;g.gain.setValueAtTime(v,s);g.gain.exponentialRampToValueAtTime(.001,s+d);o.start(s);o.stop(s+d)}
 function fx(ok){if(!on)return;ok?[523,659,784].forEach((f,i)=>beep(f,.2,"sine",.15,i*.08)):beep(130,.4,"sawtooth",.12)}
-function tune(s){stop();playing=true;let at=0;const q=ac||(ac=new (window.AudioContext||window.webkitAudioContext)());if(q.state=="suspended")q.resume();
-s[1].split(/\s+/).join("-").split("").forEach(k=>{});
-const toks=s[1].replace(/-/g," - ").split(/\s+/).filter(Boolean);
-toks.forEach(k=>{if(k!="-"&&N[k]){const d=s[2];tm.push(setTimeout(()=>{if(on){beep(N[k],d*1.4,"triangle",.2);pulse(N[k])}},at*1000))}at+=s[2]});
-tm.push(setTimeout(()=>playing=false,at*1000))}
 function stop(){tm.forEach(clearTimeout);tm=[];playing=false}
-let pl=[];function pulse(f){pl.push({f,a:1,h:Math.random()*360})}
+function tune(s){stop();if(!on)return;ensure();playing=true;let at=0;
+s[2].forEach(f=>{tm.push(setTimeout(()=>{beep(f,s[3]*1.5,"triangle",.2);beep(f/2,s[3]*1.5,"sine",.1);pl.push({a:1,h:Math.random()*360})},at*1000));at+=s[3]});
+tm.push(setTimeout(()=>playing=false,at*1000))}
 function draw(){const w=cv.width=cv.clientWidth,h=cv.height=cv.clientHeight;x.clearRect(0,0,w,h);
 for(let i=0;i<24;i++){const bh=(playing?(Math.sin(performance.now()/120+i)*.5+.5)*h*.5:6)+6;x.fillStyle=`hsl(${i*15+200},90%,65%)`;x.fillRect(i*w/24+3,h-bh,w/24-6,bh)}
 pl=pl.filter(p=>(p.a-=.02)>0);pl.forEach(p=>{x.strokeStyle=`hsla(${p.h},90%,65%,${p.a})`;x.lineWidth=4;x.beginPath();x.arc(w/2,h/2,(1-p.a)*h*.7,0,7);x.stroke()});
 $("q").style.opacity=ans?0:1;requestAnimationFrame(draw)}
 function shuf(a){return a.map(v=>[Math.random(),v]).sort((p,q)=>p[0]-q[0]).map(v=>v[1])}
 function round(){ans=false;cur=order[r];$("rd").textContent="Round "+(r+1)+"/8";$("msg").textContent="Listen, then pick the title!";
-const w=shuf(S.filter(s=>s!=cur)).slice(0,5);t=shuf([cur,...w]);$("opts").innerHTML="";
-t.forEach((s,i)=>{const b=document.createElement("button");b.className="o";b.innerHTML="<b>"+"ABCDEF"[i]+"</b>"+s[0];b.onclick=()=>pick(b,s);$("opts").appendChild(b)});
-$("q").textContent="?";if(on)tune(cur)}
-let order=[];
+t=shuf([cur,...shuf(S.filter(s=>s!=cur)).slice(0,5)]);$("opts").innerHTML="";
+t.forEach((s,i)=>{const b=document.createElement("button");b.className="o";b.innerHTML="<b>"+"ABCDEF"[i]+"</b><span>"+s[0]+"<small>"+s[1]+"</small></span>";b.onclick=()=>pick(b,s);$("opts").appendChild(b)});
+$("q").textContent="?";tune(cur)}
 function start(){ensure();order=shuf(S).slice(0,8);sc=0;r=0;$("sc").textContent="Score 0";$("end").style.display="none";round()}
-function ensure(){if(!ac)ac=new (window.AudioContext||window.webkitAudioContext)()}
 function pick(b,s){if(ans)return;ans=true;stop();const ok=s==cur;
-if(ok){sc+=10;b.classList.add("ok");$("msg").textContent="🎉 Correct! +10"}else{b.classList.add("bad");[...$("opts").children].forEach((e,i)=>{if(t[i]==cur)e.classList.add("ok")});$("msg").textContent="Oops! It was "+cur[0]}
+if(ok){sc+=10;b.classList.add("ok");$("msg").textContent="🎉 Correct! +10"}else{b.classList.add("bad");[...$("opts").children].forEach((e,i)=>{if(t[i]==cur)e.classList.add("ok")});$("msg").textContent="Oops! It was "+cur[0]+" – "+cur[1]}
 $("q").textContent="🎶";$("sc").textContent="Score "+sc;fx(ok);
-setTimeout(()=>{r++;if(r>=8)fin();else round()},1800)}
+setTimeout(()=>{r++;if(r>=8)fin();else round()},1900)}
 function fin(){best=Math.max(best,sc);$("bs").textContent="Best "+best;$("et").textContent=sc>=60?"Music master!":"Nice listening!";$("es").textContent="Score "+sc+" of 80 · Best "+best;$("end").style.display="flex"}
-$("play").onclick=()=>{ensure();if(ac.state=="suspended")ac.resume();if(!cur){start();return}if(!on){on=true;$("snd").textContent="🔊 Sound on"}tune(cur)};
+function play(){if(!cur){on=true;$("snd").textContent="🔊 Sound on";start();$("play").textContent="🔁 Replay song";return}
+ensure();if(!on){on=true;$("snd").textContent="🔊 Sound on"}tune(cur)}
+$("play").onclick=play;
 $("snd").onclick=()=>{ensure();on=!on;$("snd").textContent=on?"🔊 Sound on":"🔇 Sound off";if(!on)stop();else if(cur&&!ans)tune(cur)};
-$("again").onclick=()=>{start()};
+$("again").onclick=start;
 document.addEventListener("contextmenu",e=>e.preventDefault());
 document.addEventListener("visibilitychange",()=>{if(document.hidden)stop()});
 window.addEventListener("blur",stop);
-window.addEventListener("keydown",e=>{const i="abcdef".indexOf(e.key.toLowerCase());if(i>=0&&$("opts").children[i]&&$("end").style.display!="flex")$("opts").children[i].click();if(e.code=="Space")$("play").click()});
+window.addEventListener("keydown",e=>{if(e.code=="Space"){e.preventDefault();if($("end").style.display!="flex")play();return}
+const i="abcdef".indexOf(e.key.toLowerCase());if(i>=0&&$("opts").children[i]&&$("end").style.display!="flex")$("opts").children[i].click()});
 draw();
-$("play").textContent="▶ Start & play";
-const oc=$("play").onclick;$("play").onclick=()=>{if(!cur){on=true;$("snd").textContent="🔊 Sound on";start();$("play").textContent="🔁 Replay song"}else oc()};
 </script></body></html>
