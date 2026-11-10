@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data: blob:; media-src data: blob:; font-src data:; connect-src 'none'; form-action 'none'; base-uri 'none'; frame-src 'none'; object-src 'none'"><script>(function(){var n=function(){throw new Error("network is blocked in this app")};try{window.fetch=n;window.XMLHttpRequest=n;window.WebSocket=n;window.EventSource=n;window.open=function(){return null};if(navigator.sendBeacon)navigator.sendBeacon=function(){return false}}catch(e){}})();</script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Taco Tuesday Club – Tip Calculator</title>
+<style>
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;font-family:Segoe UI,Arial,sans-serif;background:#fffaf0;color:#1d1b4d}
+nav{position:sticky;top:0;background:#1d1b4d;display:flex;gap:6px;flex-wrap:wrap;justify-content:center;padding:8px;z-index:5}
+nav a{color:#fff;text-decoration:none;padding:10px 14px;border-radius:20px;font-weight:600}
+nav a:hover{background:#ff7a3d}
+.hero{text-align:center;padding:60px 20px;background:linear-gradient(135deg,#ff7a3d,#ffc83d)}
+.hero h1{font-size:2.4em;margin:0 0 10px}
+.hero button{font-size:1.1em;padding:14px 26px;border:0;border-radius:30px;background:#1d1b4d;color:#fff;cursor:pointer;margin-top:12px}
+section{max-width:900px;margin:auto;padding:46px 20px}
+h2{font-size:1.8em;margin-top:0}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px}
+.card{background:#fff;border:2px solid #1d1b4d;border-radius:14px;padding:16px}
+.big{font-size:3em;text-align:center}
+.calc{max-width:420px;margin:auto;background:#fff;border:3px solid #1d1b4d;border-radius:18px;padding:20px}
+.calc label{font-weight:700;display:block;margin:10px 0 6px}
+.calc input[type=number]{width:100%;font-size:1.4em;padding:12px;border:2px solid #1d1b4d;border-radius:10px}
+.tips{display:flex;gap:8px}
+.tips button{flex:1;font-size:1.2em;padding:14px;border:2px solid #1d1b4d;border-radius:10px;background:#fff;cursor:pointer;color:#1d1b4d}
+.tips button.on{background:#ff7a3d;color:#fff}
+.ppl{display:flex;align-items:center;justify-content:space-between;border:2px solid #1d1b4d;border-radius:10px;padding:8px}
+.ppl button{width:52px;height:52px;font-size:1.6em;border:0;border-radius:50%;background:#1d1b4d;color:#fff;cursor:pointer}
+.ppl span{font-size:1.6em;font-weight:700}
+.res{margin-top:16px;border:2px solid #1d1b4d;border-radius:10px;padding:14px;font-size:1.25em;background:#fff3d6}
+.res p{margin:6px 0}
+form input,form textarea{width:100%;padding:12px;margin:6px 0;border:2px solid #1d1b4d;border-radius:10px;font-size:1em}
+form button{padding:14px 26px;border:0;border-radius:30px;background:#ff7a3d;color:#fff;font-size:1em;cursor:pointer}
+footer{text-align:center;padding:20px;background:#1d1b4d;color:#fff}
+</style>
+</head>
+<body>
+<nav><a href="#top">Home</a><a href="#about">About</a><a href="#calc">Tip Calculator</a><a href="#events">Schedule</a><a href="#join">Join</a></nav>
+<div class="hero" id="top">
+<h1>🌮 Taco Tuesday Club</h1>
+<p>Friends, tacos, and fair splits every week!</p>
+<button onclick="document.getElementById('calc').scrollIntoView()">Split the bill</button>
+</div>
+<section id="about">
+<h2>About us</h2>
+<p>We are a group of taco fans who meet every Tuesday to try a new spot in town. To keep things fair, we made our own tip calculator below.</p>
+<div class="grid"><div class="card"><div class="big">🌯</div>42 tacos eaten last month</div><div class="card"><div class="big">👯</div>18 happy members</div><div class="card"><div class="big">⭐</div>25 restaurants rated</div></div>
+</section>
+<section id="calc">
+<h2>Tip Calculator</h2>
+<div class="calc">
+<label for="bill">Bill: $</label>
+<input type="number" id="bill" min="0" step="0.01" placeholder="0.00">
+<label>Tip:</label>
+<div class="tips"><button data-t="10">10%</button><button data-t="15" class="on">15%</button><button data-t="20">20%</button></div>
+<label>People:</label>
+<div class="ppl"><button id="minus" aria-label="fewer">−</button><span id="n">2</span><button id="plus" aria-label="more">+</button></div>
+<div class="res"><p>TIP: <b id="tip">$0.00</b></p><p>EACH PAYS: <b id="each">$0.00</b></p></div>
+</div>
+</section>
+<section id="events">
+<h2>Schedule</h2>
+<div class="grid">
+<div class="card"><b>Tue 6:00 PM</b><br>🌮 El Sol Taqueria</div>
+<div class="card"><b>Next Tue 6:30 PM</b><br>🔥 Spicy Salsa Night</div>
+<div class="card"><b>In 2 weeks</b><br>🥑 Guac-Off Contest</div>
+</div>
+</section>
+<section id="join">
+<h2>Join the club</h2>
+<form id="f"><input id="nm" placeholder="Your name" required><input id="em" type="email" placeholder="Your email" required><textarea rows="3" placeholder="Favorite taco?"></textarea><button>Join us!</button></form>
+<p id="msg"></p>
+</section>
+<footer>Made with 💛 by the Taco Tuesday Club</footer>
+<script>
+let tip=15,n=2;
+const $=id=>document.getElementById(id);
+function calc(){
+const b=parseFloat($('bill').value)||0;
+const t=b*tip/100;
+$('tip').textContent='$'+t.toFixed(2);
+$('each').textContent='$'+((b+t)/n).toFixed(2);
+$('n').textContent=n;
+}
+document.querySelectorAll('.tips button').forEach(x=>x.onclick=()=>{
+document.querySelectorAll('.tips button').forEach(y=>y.classList.remove('on'));
+x.classList.add('on');tip=+x.dataset.t;calc();
+});
+$('minus').onclick=()=>{if(n>1)n--;calc()};
+$('plus').onclick=()=>{if(n<50)n++;calc()};
+$('bill').oninput=calc;
+$('f').onsubmit=e=>{e.preventDefault();$('msg').textContent='Welcome, '+$('nm').value+'! 🌮 See you Tuesday.';e.target.reset()};
+calc();
+</script>
+</body>
+</html>
