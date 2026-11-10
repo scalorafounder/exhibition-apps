@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data: blob:; media-src data: blob:; font-src data:; connect-src 'none'; form-action 'none'; base-uri 'none'; frame-src 'none'; object-src 'none'"><script>(function(){var n=function(){throw new Error("network is blocked in this app")};try{window.fetch=n;window.XMLHttpRequest=n;window.WebSocket=n;window.EventSource=n;window.open=function(){return null};if(navigator.sendBeacon)navigator.sendBeacon=function(){return false}}catch(e){}})();</script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Study Timer</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;background:#faf7f0;font-family:"Comic Sans MS","Segoe Print",cursive;color:#1b1b5e}
+.app{width:min(92vw,380px);border:3px solid #222;border-radius:6px;padding:20px;text-align:center;background:#fffdf8}
+h1{margin:0 0 10px;font-size:1.7rem;letter-spacing:1px}
+.ring{position:relative;width:260px;max-width:100%;aspect-ratio:1;margin:10px auto}
+svg{width:100%;height:100%;transform:rotate(-90deg)}
+.time{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:3.2rem;font-weight:bold}
+.row{display:flex;gap:12px;margin:16px 0}
+button{flex:1;padding:16px 0;font:inherit;font-size:1.3rem;color:#1b1b5e;background:#fff;border:3px solid #222;border-radius:6px;cursor:pointer}
+button:active{transform:scale(.96);background:#e8e8ff}
+#msg{min-height:1.4em;font-size:.95rem}
+</style>
+</head>
+<body>
+<div class="app">
+<h1>STUDY TIMER</h1>
+<div class="ring">
+<svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="46" fill="none" stroke="#dde" stroke-width="3"/><circle id="arc" cx="50" cy="50" r="46" fill="none" stroke="#1b1b5e" stroke-width="3" stroke-linecap="round" stroke-dasharray="289" stroke-dashoffset="0"/></svg>
+<div class="time" id="t">25:00</div>
+</div>
+<div class="row"><button id="s">START</button><button id="r">RESET</button></div>
+<div id="msg">Ready to focus? 📚</div>
+<p style="font-size:1.2rem">Sessions done: <span id="n">0</span></p>
+</div>
+<script>
+const T=1500;let left=T,timer=null,n=0,ac=null;
+const t=document.getElementById('t'),arc=document.getElementById('arc'),s=document.getElementById('s'),msg=document.getElementById('msg');
+function show(){const m=String(Math.floor(left/60)).padStart(2,'0'),c=String(left%60).padStart(2,'0');t.textContent=m+':'+c;arc.style.strokeDashoffset=289*(1-left/T);document.title=m+':'+c+' Study Timer'}
+function beep(){try{ac=ac||new (window.AudioContext||window.webkitAudioContext)();[660,880,1100].forEach((f,i)=>{const o=ac.createOscillator(),g=ac.createGain();o.frequency.value=f;o.connect(g);g.connect(ac.destination);const st=ac.currentTime+i*.25;g.gain.setValueAtTime(.2,st);g.gain.exponentialRampToValueAtTime(.001,st+.22);o.start(st);o.stop(st+.25)})}catch(e){}}
+function stop(){clearInterval(timer);timer=null;s.textContent='START'}
+s.onclick=()=>{
+if(timer){stop();msg.textContent='Paused ⏸';return}
+if(left===0)left=T;
+try{ac=ac||new (window.AudioContext||window.webkitAudioContext)()}catch(e){}
+s.textContent='PAUSE';msg.textContent='Focus time! 💪';
+timer=setInterval(()=>{left--;show();if(left<=0){stop();n++;document.getElementById('n').textContent=n;msg.textContent='Great job! Take a break 🎉';beep();left=0;show()}},1000)};
+document.getElementById('r').onclick=()=>{stop();left=T;show();msg.textContent='Ready to focus? 📚'};
+show();
+</script>
+</body>
+</html>
