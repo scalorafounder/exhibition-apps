@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data: blob:; media-src data: blob:; font-src data:; connect-src 'none'; form-action 'none'; base-uri 'none'; frame-src 'none'; object-src 'none'"><script>(function(){var n=function(){throw new Error("network is blocked in this app")};try{window.fetch=n;window.XMLHttpRequest=n;window.WebSocket=n;window.EventSource=n;window.open=function(){return null};if(navigator.sendBeacon)navigator.sendBeacon=function(){return false}}catch(e){}})();</script><style data-xw="1">*{-webkit-user-select:none!important;user-select:none!important;-webkit-touch-callout:none!important;-webkit-tap-highlight-color:transparent!important}
+input,textarea,[contenteditable="true"],[contenteditable=""]{-webkit-user-select:text!important;user-select:text!important}
+html,body{touch-action:manipulation;overscroll-behavior:none}
+button,a,[role=button],select,summary,label{touch-action:manipulation}
+canvas{touch-action:none}
+img,svg{-webkit-user-drag:none;user-drag:none}</style><script data-xw="1">(function(){
+var held={},keys={},tn=/^(BUTTON|CANVAS)$/,ctl=/(^|[^a-z])(btn|button|ctrl|control|pad|key|arrow|dpad|left|right|up|down|jump|fire|shoot|move|hold)([^a-z]|$)/i;
+function isCtl(e){try{if(!e||e.nodeType!==1)return false;if(tn.test(e.tagName)||e.getAttribute('role')==='button')return true;return ctl.test((e.id||'')+' '+(typeof e.className==='string'?e.className:''))}catch(x){return false}}
+function noScroll(e){try{if(isCtl(e))e.style.setProperty('touch-action','none')}catch(x){}}
+// elements that listen for presses get touch-action:none, so holding or sliding never scrolls or zooms
+try{var add=EventTarget.prototype.addEventListener;EventTarget.prototype.addEventListener=function(t){if(t==='pointerdown'||t==='touchstart'||t==='mousedown')noScroll(this);return add.apply(this,arguments)}}catch(x){}
+function scan(){try{var l=document.querySelectorAll('[onpointerdown],[ontouchstart],[onmousedown],button,canvas');for(var i=0;i<l.length;i++){var e=l[i];if(e.hasAttribute('onpointerdown')||e.hasAttribute('ontouchstart')||e.hasAttribute('onmousedown')||e.tagName==='CANVAS')noScroll(e)}}catch(x){}}
+document.addEventListener('DOMContentLoaded',scan);window.addEventListener('load',scan);
+document.addEventListener('contextmenu',function(e){e.preventDefault()},true);
+document.addEventListener('selectstart',function(e){var t=e.target&&e.target.nodeType===1?e.target:e.target&&e.target.parentElement;if(t&&/^(INPUT|TEXTAREA)$/.test(t.tagName)||t&&t.isContentEditable)return;e.preventDefault()},true);
+document.addEventListener('dragstart',function(e){e.preventDefault()},true);
+function fire(el,type,id,pt){try{var o={bubbles:true,cancelable:true,composed:true,pointerId:id,pointerType:pt||'touch',isPrimary:true,view:window};
+if(type.indexOf('pointer')===0&&window.PointerEvent)el.dispatchEvent(new PointerEvent(type,o));
+else if(type.indexOf('mouse')===0)el.dispatchEvent(new MouseEvent(type,{bubbles:type!=='mouseleave',cancelable:true,view:window}));
+else if(type.indexOf('touch')===0&&window.TouchEvent)el.dispatchEvent(new TouchEvent(type,{bubbles:true,cancelable:true}))}catch(x){}}
+function release(id){var h=held[id];if(!h)return;delete held[id];var el=h.el;if(!el||!el.isConnected)return;
+['pointerup','pointerout','pointerleave'].forEach(function(t){fire(el,t,id,h.pt)});['mouseup','mouseout','mouseleave'].forEach(function(t){fire(el,t,id,h.pt)});fire(el,'touchend',id,h.pt)}
+function releaseAll(){Object.keys(held).forEach(release);Object.keys(keys).forEach(function(k){var h=keys[k];delete keys[k];try{(document.activeElement||document.body).dispatchEvent(new KeyboardEvent('keyup',{key:h.key,code:h.code,keyCode:h.kc,which:h.kc,bubbles:true,cancelable:true}))}catch(x){}})}
+window.addEventListener('pointerdown',function(e){held[e.pointerId]={el:e.target,pt:e.pointerType}},true);
+window.addEventListener('pointerup',function(e){var h=held[e.pointerId];if(!h)return;if(h.el===e.target||e.pointerType==='touch'&&h.el.contains&&h.el.contains(e.target)){delete held[e.pointerId]}else release(e.pointerId)},true);
+window.addEventListener('pointercancel',function(e){setTimeout(function(){release(e.pointerId)},0)},true);
+window.addEventListener('lostpointercapture',function(e){setTimeout(function(){release(e.pointerId)},30)},true);
+window.addEventListener('mousedown',function(e){if(!held.mouse)held.mouse={el:e.target,pt:'mouse'}},true);
+window.addEventListener('mouseup',function(e){var h=held.mouse;if(!h)return;if(h.el!==e.target){release('mouse')}else delete held.mouse},true);
+window.addEventListener('touchcancel',function(){setTimeout(function(){Object.keys(held).forEach(release)},0)},true);
+window.addEventListener('keydown',function(e){if(e.key)keys[e.code||e.key]={key:e.key,code:e.code,kc:e.keyCode}},true);
+window.addEventListener('keyup',function(e){delete keys[e.code||e.key]},true);
+window.addEventListener('blur',releaseAll);window.addEventListener('pagehide',releaseAll);
+document.addEventListener('visibilitychange',function(){if(document.hidden)releaseAll()});
+window.__xwRelease=releaseAll;
+})();</script><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>My To-Do List</title>
+<style>
+*{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;-webkit-tap-highlight-color:transparent;box-sizing:border-box}
+input{-webkit-user-select:text;user-select:text}
+html,body{touch-action:manipulation;overscroll-behavior:none;margin:0}
+:root{--d:#1b1b4b;--l:#eaf6ff;--a:#ff6b6b;--g:#2ecc71;--b:#4ecdc4;--c:#ffd166;--r:18px}
+body{height:100dvh;font-family:system-ui,Segoe UI,Roboto,sans-serif;color:var(--d);background:radial-gradient(circle at 15% 10%,#cfe9ff 0,transparent 40%),radial-gradient(circle at 90% 90%,#b9dcff 0,transparent 45%),#d6ecff;display:flex;align-items:center;justify-content:center;padding:12px;overflow:hidden}
+.app{width:100%;max-width:460px;height:100%;max-height:760px;background:#fff;border:3px solid var(--d);border-radius:24px;box-shadow:8px 8px 0 var(--d);display:flex;flex-direction:column;padding:18px;gap:14px}
+.top{display:flex;align-items:center;justify-content:space-between}
+h1{margin:0;font-size:1.6rem;letter-spacing:1px}
+button{font:inherit;color:inherit;cursor:pointer;transition:transform .12s,background .2s}
+button:active{transform:scale(.93)}
+.snd{background:var(--c);border:2px solid var(--d);border-radius:12px;min-width:56px;height:44px;font-size:1.2rem}
+form{display:flex;gap:10px}
+input{flex:1;min-width:0;height:56px;border:2px solid var(--d);border-radius:var(--r);padding:0 14px;font-size:1.05rem;background:var(--l);color:var(--d)}
+input:focus{outline:3px solid var(--b)}
+.add{height:56px;padding:0 20px;background:var(--g);color:var(--d);font-weight:800;border:2px solid var(--d);border-radius:var(--r);font-size:1rem}
+ul{list-style:none;margin:0;padding:0;flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:10px}
+li{display:flex;align-items:center;gap:12px;min-height:60px;padding:6px 10px;border:2px solid var(--d);border-radius:var(--r);background:var(--l);animation:in .25s}
+@keyframes in{from{opacity:0;transform:translateY(10px) scale(.96)}}
+li.out{opacity:0;transform:translateX(60px);transition:.25s}
+.box{width:44px;height:44px;flex:none;border:2.5px solid var(--d);border-radius:12px;background:#fff;font-size:1.5rem;color:#fff}
+li.done .box{background:var(--b)}
+.t{flex:1;font-size:1.15rem;word-break:break-word;transition:.2s}
+li.done .t{text-decoration:line-through;opacity:.5}
+.x{width:44px;height:44px;flex:none;border:0;background:none;font-size:1.6rem;color:var(--a);font-weight:800}
+.empty{text-align:center;margin:auto;font-size:1.1rem;opacity:.8}
+.foot{display:flex;justify-content:space-between;align-items:center;font-weight:700}
+.clr{background:none;border:2px solid var(--d);border-radius:12px;height:44px;padding:0 14px}
+.win{color:#0a8f84}
+</style></head><body>
+<div class="app">
+<div class="top"><h1>MY TO-DO LIST</h1><button class="snd" id="s" aria-label="sound">🔇</button></div>
+<form id="f"><input id="i" placeholder="add a task..." maxlength="60" autocomplete="off"><button class="add">ADD</button></form>
+<ul id="l"></ul>
+<div class="foot"><span id="n"></span><button class="clr" id="c">Clear done</button></div>
+</div>
+<script>
+let T=[{t:"buy milk",d:0},{t:"math homework",d:0},{t:"call grandma",d:0}],id=3,on=0,ac;
+T.forEach((x,k)=>x.id=k);
+const l=document.getElementById("l"),n=document.getElementById("n"),i=document.getElementById("i"),s=document.getElementById("s");
+document.addEventListener("contextmenu",e=>e.preventDefault());
+function beep(f,d=.12){if(!on)return;ac=ac||new(window.AudioContext||window.webkitAudioContext)();const o=ac.createOscillator(),g=ac.createGain();o.frequency.value=f;o.type="triangle";g.gain.setValueAtTime(.15,ac.currentTime);g.gain.exponentialRampToValueAtTime(.001,ac.currentTime+d);o.connect(g);g.connect(ac.destination);o.start();o.stop(ac.currentTime+d)}
+s.onclick=()=>{on=!on;s.textContent=on?"🔊":"🔇";beep(660)};
+function draw(){
+l.innerHTML="";
+if(!T.length){l.innerHTML='<div class="empty">🎉<br>All clear! Add your first task above.</div>'}
+T.forEach(x=>{
+const e=document.createElement("li");e.className=x.d?"done":"";
+const b=document.createElement("button");b.className="box";b.textContent=x.d?"✓":"";
+b.onclick=()=>{x.d=!x.d;beep(x.d?880:440);draw()};
+const t=document.createElement("span");t.className="t";t.textContent=x.t;
+const r=document.createElement("button");r.className="x";r.textContent="✕";r.setAttribute("aria-label","delete");
+r.onclick=()=>{beep(220);e.classList.add("out");setTimeout(()=>{T=T.filter(y=>y!==x);draw()},230)};
+e.append(b,t,r);l.append(e)});
+const k=T.filter(x=>!x.d).length;
+n.className=T.length&&!k?"win":"";
+n.textContent=!T.length?"Nothing to do":!k?"All done! 🎉":k+(k==1?" task left":" tasks left");
+}
+document.getElementById("f").onsubmit=e=>{e.preventDefault();const v=i.value.trim();if(!v){i.focus();return}
+T.push({t:v,d:0,id:id++});i.value="";beep(600);draw();l.scrollTop=l.scrollHeight;i.focus()};
+document.getElementById("c").onclick=()=>{T=T.filter(x=>!x.d);beep(300);draw()};
+draw();
+</script></body></html>
