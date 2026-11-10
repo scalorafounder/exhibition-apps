@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data: blob:; media-src data: blob:; font-src data:; connect-src 'none'; form-action 'none'; base-uri 'none'; frame-src 'none'; object-src 'none'"><script>(function(){var n=function(){throw new Error("network is blocked in this app")};try{window.fetch=n;window.XMLHttpRequest=n;window.WebSocket=n;window.EventSource=n;window.open=function(){return null};if(navigator.sendBeacon)navigator.sendBeacon=function(){return false}}catch(e){}})();</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>My To-Do List</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:16px;background:#faf7f0;background-image:repeating-linear-gradient(#faf7f0 0 31px,#dde2f3 31px 32px);font-family:"Segoe Print","Comic Sans MS",cursive,sans-serif;color:#1c1c5c}
+.card{width:100%;max-width:440px;min-height:560px;background:#fffdf8;border:3px solid #222;border-radius:6px;padding:20px;display:flex;flex-direction:column;box-shadow:6px 6px 0 #0002}
+h1{text-align:center;font-size:1.7rem;margin:6px 0 18px;letter-spacing:1px}
+form{display:flex;gap:8px}
+input[type=text]{flex:1;min-width:0;font:inherit;font-size:1.1rem;padding:12px;border:3px solid #222;border-radius:4px;background:#fff;color:#1c1c5c}
+button{font:inherit;cursor:pointer}
+.add{border:3px solid #222;background:#ffe27a;color:#1c1c5c;font-size:1.1rem;padding:0 16px;border-radius:4px;min-height:48px}
+.add:active{transform:scale(.95)}
+ul{list-style:none;padding:0;margin:18px 0;flex:1}
+li{display:flex;align-items:center;gap:12px;padding:10px 0;font-size:1.3rem}
+.box{width:40px;height:40px;flex:none;border:3px solid #222;background:#fff;border-radius:4px;font-size:1.5rem;line-height:1;color:#2a9d4a;padding:0}
+.t{flex:1;word-break:break-word;cursor:pointer}
+.done .t{text-decoration:line-through;opacity:.5}
+.x{width:44px;height:44px;flex:none;border:0;background:none;font-size:1.8rem;color:#222}
+.x:hover{color:#d33}
+.empty{text-align:center;opacity:.6;margin-top:40px}
+.foot{font-size:1.15rem;display:flex;justify-content:space-between;align-items:center}
+.clr{background:none;border:2px solid #1c1c5c;border-radius:4px;color:#1c1c5c;padding:6px 10px;font-size:.9rem}
+</style>
+</head>
+<body>
+<div class="card">
+<h1>MY TO-DO LIST</h1>
+<form id="f"><input type="text" id="in" placeholder="add a task..." maxlength="80" autocomplete="off"><button class="add" type="submit">ADD</button></form>
+<ul id="list"></ul>
+<div class="foot"><span id="count"></span><button class="clr" id="clr">clear done</button></div>
+</div>
+<script>
+let id=3,tasks=[{id:1,t:"buy milk",d:false},{id:2,t:"math homework",d:false},{id:3,t:"call grandma",d:false}];
+const list=document.getElementById("list"),inp=document.getElementById("in");
+function render(){
+list.innerHTML="";
+if(!tasks.length){list.innerHTML='<div class="empty">🎉 All clear! Add a task above.</div>'}
+tasks.forEach(k=>{
+const li=document.createElement("li");if(k.d)li.className="done";
+const b=document.createElement("button");b.className="box";b.textContent=k.d?"✓":"";b.setAttribute("aria-label","toggle");
+const s=document.createElement("span");s.className="t";s.textContent=k.t;
+const x=document.createElement("button");x.className="x";x.textContent="✕";x.setAttribute("aria-label","delete");
+const tog=()=>{k.d=!k.d;render()};
+b.onclick=tog;s.onclick=tog;
+x.onclick=()=>{tasks=tasks.filter(z=>z.id!==k.id);render()};
+li.append(b,s,x);list.append(li);
+});
+const n=tasks.filter(k=>!k.d).length;
+document.getElementById("count").textContent=n+(n===1?" task left":" tasks left");
+}
+document.getElementById("f").onsubmit=e=>{
+e.preventDefault();
+const v=inp.value.trim();
+if(!v)return;
+tasks.push({id:++id,t:v,d:false});
+inp.value="";render();inp.focus();
+};
+document.getElementById("clr").onclick=()=>{tasks=tasks.filter(k=>!k.d);render()};
+render();
+</script>
+</body>
+</html>
