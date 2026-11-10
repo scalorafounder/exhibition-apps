@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data: blob:; media-src data: blob:; font-src data:; connect-src 'none'; form-action 'none'; base-uri 'none'; frame-src 'none'; object-src 'none'"><script>(function(){var n=function(){throw new Error("network is blocked in this app")};try{window.fetch=n;window.XMLHttpRequest=n;window.WebSocket=n;window.EventSource=n;window.open=function(){return null};if(navigator.sendBeacon)navigator.sendBeacon=function(){return false}}catch(e){}})();</script><style data-xw="1">*{-webkit-user-select:none!important;user-select:none!important;-webkit-touch-callout:none!important;-webkit-tap-highlight-color:transparent!important}
+input,textarea,[contenteditable="true"],[contenteditable=""]{-webkit-user-select:text!important;user-select:text!important}
+html,body{touch-action:manipulation;overscroll-behavior:none}
+button,a,[role=button],select,summary,label{touch-action:manipulation}
+canvas{touch-action:none}
+img,svg{-webkit-user-drag:none;user-drag:none}</style><script data-xw="1">(function(){
+var held={},keys={},tn=/^(BUTTON|CANVAS)$/,ctl=/(^|[^a-z])(btn|button|ctrl|control|pad|key|arrow|dpad|left|right|up|down|jump|fire|shoot|move|hold)([^a-z]|$)/i;
+function isCtl(e){try{if(!e||e.nodeType!==1)return false;if(tn.test(e.tagName)||e.getAttribute('role')==='button')return true;return ctl.test((e.id||'')+' '+(typeof e.className==='string'?e.className:''))}catch(x){return false}}
+function noScroll(e){try{if(isCtl(e))e.style.setProperty('touch-action','none')}catch(x){}}
+// elements that listen for presses get touch-action:none, so holding or sliding never scrolls or zooms
+try{var add=EventTarget.prototype.addEventListener;EventTarget.prototype.addEventListener=function(t){if(t==='pointerdown'||t==='touchstart'||t==='mousedown')noScroll(this);return add.apply(this,arguments)}}catch(x){}
+function scan(){try{var l=document.querySelectorAll('[onpointerdown],[ontouchstart],[onmousedown],button,canvas');for(var i=0;i<l.length;i++){var e=l[i];if(e.hasAttribute('onpointerdown')||e.hasAttribute('ontouchstart')||e.hasAttribute('onmousedown')||e.tagName==='CANVAS')noScroll(e)}}catch(x){}}
+document.addEventListener('DOMContentLoaded',scan);window.addEventListener('load',scan);
+document.addEventListener('contextmenu',function(e){e.preventDefault()},true);
+document.addEventListener('selectstart',function(e){var t=e.target&&e.target.nodeType===1?e.target:e.target&&e.target.parentElement;if(t&&/^(INPUT|TEXTAREA)$/.test(t.tagName)||t&&t.isContentEditable)return;e.preventDefault()},true);
+document.addEventListener('dragstart',function(e){e.preventDefault()},true);
+function fire(el,type,id,pt){try{var o={bubbles:true,cancelable:true,composed:true,pointerId:id,pointerType:pt||'touch',isPrimary:true,view:window};
+if(type.indexOf('pointer')===0&&window.PointerEvent)el.dispatchEvent(new PointerEvent(type,o));
+else if(type.indexOf('mouse')===0)el.dispatchEvent(new MouseEvent(type,{bubbles:type!=='mouseleave',cancelable:true,view:window}));
+else if(type.indexOf('touch')===0&&window.TouchEvent)el.dispatchEvent(new TouchEvent(type,{bubbles:true,cancelable:true}))}catch(x){}}
+function release(id){var h=held[id];if(!h)return;delete held[id];var el=h.el;if(!el||!el.isConnected)return;
+['pointerup','pointerout','pointerleave'].forEach(function(t){fire(el,t,id,h.pt)});['mouseup','mouseout','mouseleave'].forEach(function(t){fire(el,t,id,h.pt)});fire(el,'touchend',id,h.pt)}
+function releaseAll(){Object.keys(held).forEach(release);Object.keys(keys).forEach(function(k){var h=keys[k];delete keys[k];try{(document.activeElement||document.body).dispatchEvent(new KeyboardEvent('keyup',{key:h.key,code:h.code,keyCode:h.kc,which:h.kc,bubbles:true,cancelable:true}))}catch(x){}})}
+window.addEventListener('pointerdown',function(e){held[e.pointerId]={el:e.target,pt:e.pointerType}},true);
+window.addEventListener('pointerup',function(e){var h=held[e.pointerId];if(!h)return;if(h.el===e.target||e.pointerType==='touch'&&h.el.contains&&h.el.contains(e.target)){delete held[e.pointerId]}else release(e.pointerId)},true);
+window.addEventListener('pointercancel',function(e){setTimeout(function(){release(e.pointerId)},0)},true);
+window.addEventListener('lostpointercapture',function(e){setTimeout(function(){release(e.pointerId)},30)},true);
+window.addEventListener('mousedown',function(e){if(!held.mouse)held.mouse={el:e.target,pt:'mouse'}},true);
+window.addEventListener('mouseup',function(e){var h=held.mouse;if(!h)return;if(h.el!==e.target){release('mouse')}else delete held.mouse},true);
+window.addEventListener('touchcancel',function(){setTimeout(function(){Object.keys(held).forEach(release)},0)},true);
+window.addEventListener('keydown',function(e){if(e.key)keys[e.code||e.key]={key:e.key,code:e.code,kc:e.keyCode}},true);
+window.addEventListener('keyup',function(e){delete keys[e.code||e.key]},true);
+window.addEventListener('blur',releaseAll);window.addEventListener('pagehide',releaseAll);
+document.addEventListener('visibilitychange',function(){if(document.hidden)releaseAll()});
+window.__xwRelease=releaseAll;
+})();</script><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>Cat Translate</title>
+<style>
+*{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;-webkit-tap-highlight-color:transparent;box-sizing:border-box;margin:0}
+html,body{touch-action:manipulation;overscroll-behavior:none;height:100%;overflow:hidden}
+:root{--a:#ff8fab;--b:#8ecae6;--c:#ffd166;--d:#2b2d42;--l:#fff8f0;--g:#06d6a0;--r:22px}
+body{font-family:system-ui,sans-serif;background:linear-gradient(135deg,#ffd6e0,#cdeaf7);color:var(--d);display:grid;place-items:center}
+#ph{width:min(100vw,440px);height:100dvh;max-height:900px;background:var(--l);display:flex;flex-direction:column;position:relative;overflow:hidden;box-shadow:0 10px 50px #0003}
+@media(min-width:500px){#ph{height:min(100dvh - 30px,860px);border-radius:36px;border:8px solid var(--d)}}
+header{display:flex;align-items:center;gap:10px;padding:14px 16px;background:var(--a);color:#fff}
+header h1{font-size:20px;flex:1}
+.logo{width:40px;height:40px;background:#fff;border-radius:50%;display:grid;place-items:center;font-size:24px}
+#snd{min-height:44px;min-width:44px;border:0;border-radius:50%;background:#fff;font-size:20px}
+main{flex:1;position:relative;overflow:hidden}
+.s{position:absolute;inset:0;padding:18px;overflow:auto;display:flex;flex-direction:column;gap:14px;opacity:0;transform:translateX(30px);pointer-events:none;transition:.3s}
+.s.on{opacity:1;transform:none;pointer-events:auto}
+button{font:inherit;cursor:pointer;transition:transform .1s}
+button:active{transform:scale(.94)}
+.pets{display:flex;gap:8px}
+.pet{flex:1;min-height:60px;border-radius:var(--r);border:3px solid transparent;background:#fff;font-size:16px;font-weight:700}
+.pet.on{border-color:var(--d);background:var(--c)}
+.mic{align-self:center;width:160px;height:160px;border-radius:50%;border:0;background:radial-gradient(circle,var(--a),#ff5d8f);color:#fff;font-size:56px;box-shadow:0 8px 0 #c93c68;margin:6px 0;touch-action:none}
+.mic.rec{animation:p 1s infinite;background:radial-gradient(circle,var(--b),#219ebc);box-shadow:0 8px 0 #166d85}
+@keyframes p{50%{transform:scale(1.08)}}
+.hint{text-align:center;font-weight:600}
+.det{text-align:center;font-weight:800;font-size:18px;min-height:30px}
+.bub{background:#fff;border-radius:var(--r);padding:18px;font-size:21px;font-weight:700;min-height:100px;display:flex;align-items:center;justify-content:center;text-align:center;border:3px solid var(--d)}
+.bub small{display:block;font-size:14px;font-weight:500;margin-top:6px}
+.bars{display:flex;gap:4px;height:40px;align-items:center;justify-content:center}
+.bars i{width:6px;background:var(--a);border-radius:3px;height:8px;transition:height .1s}
+.btn{min-height:56px;border:0;border-radius:var(--r);background:var(--d);color:#fff;font-size:18px;font-weight:700;padding:0 18px}
+.row{background:#fff;border-radius:var(--r);padding:14px;display:flex;gap:12px;align-items:center;font-size:17px}
+.row b{display:block}
+.row span.e{font-size:30px}
+.q{width:100%;text-align:left;min-height:64px;background:#fff;border:0;border-radius:var(--r);padding:12px 16px;font-size:17px;display:flex;gap:12px;align-items:center}
+nav{display:flex;background:#fff;border-top:2px solid #0001;padding-bottom:env(safe-area-inset-bottom)}
+nav button{flex:1;min-height:64px;border:0;background:none;font-size:12px;font-weight:700;color:#777}
+nav button b{display:block;font-size:24px}
+nav button.on{color:var(--a)}
+h2{font-size:22px}
+</style></head><body>
+<div id="ph">
+<header><div class="logo">🐱</div><h1>Cat Translate</h1><button id="snd" aria-label="sound">🔇</button></header>
+<main>
+<section class="s on" id="s0">
+<div class="pets"><button class="pet on" data-p="auto">✨ Auto</button><button class="pet" data-p="cat">🐱 Cat</button><button class="pet" data-p="dog">🐶 Dog</button></div>
+<button class="mic" id="mic">🎤</button>
+<div class="bars" id="bars"></div>
+<p class="hint" id="hint">Tap the mic and speak, meow or bark!</p>
+<div class="det" id="det"></div>
+<div class="bub" id="out">Your words will show up here 💬</div>
+<button class="btn" id="again" style="display:none">🔊 Say it again</button>
+</section>
+<section class="s" id="s1"><h2>Phrase Book</h2><div id="book" style="display:flex;flex-direction:column;gap:10px"></div></section>
+<section class="s" id="s2"><h2>History</h2><div id="hist" style="display:flex;flex-direction:column;gap:10px"></div><button class="btn" id="clr">Clear history</button></section>
+</main>
+<nav><button class="on" data-t="0"><b>🎙️</b>Translate</button><button data-t="1"><b>📖</b>Phrases</button><button data-t="2"><b>🕒</b>History</button></nav>
+</div>
+<script>
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+let mode='auto',snd=false,ac,rec=false,hist=[],last='',anim,stream,an,src;
+const N={cat:['🐱 Cat','meow'],dog:['🐶 Dog','bark'],human:['🧑 Human','speech']};
+const W={cat:[["Feed me right now, human! I am starving.","😾"],["I love you. Please keep petting me.","😻"],["Open the door. No, the other door.","🚪"],["I knocked your cup off the table on purpose.","😼"],["It is 3 AM. Time to run around the house!","🌙"],["You are sitting in my spot. Move.","😒"],["Sunbeam found. Do not disturb.","☀️"],["Where were you? I missed you all day.","🥺"]],
+dog:[["Walk time? Walk time! WALK TIME!","🦮"],["You are home! Best day ever!","🥳"],["Is that a squirrel?! I must investigate!","🐿️"],["Please share your sandwich. Just a bite.","🥪"],["I heard a noise. I will protect you!","🛡️"],["Throw the ball again. Again. Again!","🎾"],["I love you so much I cannot sit still.","❤️"],["Belly rubs are now open.","🐾"]],
+human:[["Hello, human! Your words are clear: you sound friendly.","🧑"],["Human detected. Translating to pet: 'Feed me, please.'","🍽️"],["In cat language that means: 'You may pet me now.'","🐱"],["In dog language that means: 'Walk time!'","🐶"]]};
+function ctx(){ac=ac||new(window.AudioContext||window.webkitAudioContext)();if(ac.state=='suspended')ac.resume();return ac}
+function tone(f,d,t='sine'){if(!snd)return;const c=ctx(),o=c.createOscillator(),g=c.createGain();o.type=t;o.frequency.value=f;g.gain.value=.1;g.gain.exponentialRampToValueAtTime(.001,c.currentTime+d);o.connect(g);g.connect(c.destination);o.start();o.stop(c.currentTime+d)}
+$('#snd').onclick=()=>{snd=!snd;$('#snd').textContent=snd?'🔊':'🔇';if(snd){ctx();tone(660,.15)}};
+const bars=$('#bars');for(let i=0;i<20;i++)bars.appendChild(document.createElement('i'));
+function hintTxt(){$('#hint').textContent=mode=='auto'?'Tap the mic and speak, meow or bark!':'Tap the mic, then '+(mode=='cat'?'let your cat meow!':'let your dog bark!')}
+$$('.pet').forEach(b=>b.onclick=()=>{mode=b.dataset.p;$$('.pet').forEach(x=>x.classList.toggle('on',x==b));tone(600,.12);$('#out').innerHTML="Your words will show up here 💬";$('#det').textContent='';$('#again').style.display='none';hintTxt()});
+function stopAnim(){clearInterval(anim);$$('#bars i').forEach(i=>i.style.height='8px')}
+function classify(f){
+if(!f.n)return null;
+const m=f.zc/f.n,c=f.cen,v=f.var;
+if(c>1500&&f.pk>700)return 'cat';
+if(f.pk<420&&f.burst>=2)return 'dog';
+if(f.burst>=2&&c<1400&&f.pk<700)return 'dog';
+if(c>1300&&f.pk>=600)return 'cat';
+return 'human'}
+function fake(){const r=Math.random();return r<.4?'cat':r<.7?'dog':'human'}
+async function listen(){
+const f={n:0,zc:0,cen:0,pk:0,burst:0,var:0};
+try{
+const s=await navigator.mediaDevices.getUserMedia({audio:true});stream=s;
+const c=ctx(),a=c.createAnalyser();a.fftSize=1024;const so=c.createMediaStreamSource(s);so.connect(a);
+const d=new Uint8Array(a.frequencyBinCount),t0=performance.now();let was=false,sumC=0,sumP=0,cnt=0;
+await new Promise(res=>{const lp=()=>{a.getByteFrequencyData(d);let e=0,w=0,mx=0,mi=0;for(let i=0;i<d.length;i++){e+=d[i];w+=d[i]*i;if(d[i]>mx){mx=d[i];mi=i}}
+const hz=c.sampleRate/a.fftSize,lv=e/d.length;
+const loud=lv>18;if(loud){cnt++;sumC+=e?w/e*hz:0;sumP+=mi*hz}
+if(loud&&!was)f.burst++;was=loud;
+$$('#bars i').forEach((x,i)=>x.style.height=8+d[i*2]/255*32+'px');
+if(performance.now()-t0<2800)requestAnimationFrame(lp);else res()};lp()});
+so.disconnect();s.getTracks().forEach(t=>t.stop());stream=null;
+if(cnt<5)return {k:null};
+f.n=cnt;f.cen=sumC/cnt;f.pk=sumP/cnt;return {k:classify(f),mic:true}
+}catch(e){return {k:fake(),mic:false}}}
+$('#mic').onclick=async()=>{
+if(rec)return;rec=true;$('#mic').classList.add('rec');$('#det').textContent='';$('#hint').textContent='Listening... speak, meow or bark!';
+tone(700,.2,'triangle');
+anim=setInterval(()=>{if(!stream)$$('#bars i').forEach(i=>i.style.height=8+Math.random()*32+'px')},100);
+$('#out').textContent='🐾 ...';
+const r=await listen();
+clearInterval(anim);stopAnim();rec=false;$('#mic').classList.remove('rec');
+if(!r.k){$('#out').textContent='I could not hear anything. Try again closer to the mic! 🎤';$('#hint').textContent='Tap the mic to try again';return}
+let k=r.k;if(mode!='auto'&&mode!=k&&!r.mic)k=mode;
+const w=W[k],x=w[Math.floor(Math.random()*w.length)];
+$('#det').textContent='Detected: '+N[k][0]+(r.mic?'':' (demo)');
+show(x,k);hist.unshift({p:k,t:x[0],e:x[1]});rh();tone(880,.1);setTimeout(()=>tone(1100,.15),110);hintTxt()};
+function show(r,k){last=r[0];$('#out').innerHTML=r[1]+' “'+r[0]+'”<small>Translated from '+N[k][1]+'</small>';$('#again').style.display='block'}
+$('#again').onclick=()=>{if(!snd){$('#hint').textContent='Turn sound on (top right) to hear it!';return}tone(500,.15,'triangle');setTimeout(()=>tone(700,.2,'triangle'),160)};
+function rb(){$('#book').innerHTML='';['cat','dog','human'].forEach(k=>W[k].forEach(r=>{const b=document.createElement('button');b.className='q';b.innerHTML='<span style="font-size:28px">'+r[1]+'</span><span>'+N[k][0]+': '+r[0]+'</span>';b.onclick=()=>{$('#det').textContent='Detected: '+N[k][0];show(r,k);go(0);tone(900,.12)};$('#book').appendChild(b)}))}
+function rh(){const h=$('#hist');h.innerHTML=hist.length?'':'<div class="bub">No translations yet. Go meet your pet! 🐾</div>';hist.forEach(x=>{const d=document.createElement('div');d.className='row';d.innerHTML='<span class="e">'+x.e+'</span><div><b>'+N[x.p][0]+'</b>'+x.t+'</div>';h.appendChild(d)})}
+$('#clr').onclick=()=>{hist=[];rh();tone(300,.15)};
+function go(i){$$('.s').forEach((s,j)=>s.classList.toggle('on',i==j));$$('nav button').forEach((b,j)=>b.classList.toggle('on',i==j));tone(500+i*100,.08)}
+$$('nav button').forEach(b=>b.onclick=()=>go(+b.dataset.t));
+document.addEventListener('contextmenu',e=>e.preventDefault());
+function stopAll(){if(stream)stream.getTracks().forEach(t=>t.stop())}
+window.addEventListener('blur',stopAll);
+document.addEventListener('visibilitychange',()=>{if(document.hidden)stopAll()});
+rb();rh();
+</script></body></html>
