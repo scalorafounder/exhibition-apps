@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data: blob:; media-src data: blob:; font-src data:; connect-src 'none'; form-action 'none'; base-uri 'none'; frame-src 'none'; object-src 'none'"><script>(function(){var n=function(){throw new Error("network is blocked in this app")};try{window.fetch=n;window.XMLHttpRequest=n;window.WebSocket=n;window.EventSource=n;window.open=function(){return null};if(navigator.sendBeacon)navigator.sendBeacon=function(){return false}}catch(e){}})();</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>My To-Do List</title>
+<style>
+  *{box-sizing:border-box}
+  body{margin:0;min-height:100vh;display:flex;justify-content:center;align-items:center;background:#faf7f0;background-image:repeating-linear-gradient(transparent 0 47px,#dde3f3 47px 48px);font-family:"Segoe Print","Comic Sans MS",cursive,sans-serif;color:#1a1a5e;padding:16px}
+  .card{width:100%;max-width:440px;min-height:560px;background:#faf7f0;border:3px solid #222;border-radius:6px;padding:22px;display:flex;flex-direction:column;box-shadow:6px 6px 0 rgba(0,0,0,.15)}
+  h1{text-align:center;font-size:26px;margin:0 0 18px;letter-spacing:1px}
+  form{display:flex;gap:10px}
+  input[type=text]{flex:1;min-width:0;font:inherit;font-size:18px;padding:12px;border:3px solid #222;border-radius:4px;background:#fff;color:#1a1a5e}
+  button.add{font:inherit;font-size:18px;padding:0 16px;border:3px solid #222;background:#ffe27a;color:#1a1a5e;border-radius:4px;cursor:pointer;min-height:48px}
+  button.add:active{transform:scale(.95)}
+  ul{list-style:none;padding:0;margin:20px 0;flex:1}
+  li{display:flex;align-items:center;gap:14px;padding:10px 0;font-size:21px}
+  li .box{width:36px;height:36px;flex:none;border:3px solid #222;background:#fff;border-radius:4px;cursor:pointer;font-size:24px;line-height:30px;text-align:center;padding:0;color:#2a9d4b}
+  li span{flex:1;word-break:break-word}
+  li.done span{text-decoration:line-through;opacity:.5}
+  .x{border:none;background:none;font-size:30px;cursor:pointer;color:#222;width:44px;height:44px}
+  .x:hover{color:#c0392b}
+  .count{font-size:18px;margin:0}
+  .empty{text-align:center;opacity:.6;padding:20px}
+</style>
+</head>
+<body>
+<div class="card">
+  <h1>MY TO-DO LIST</h1>
+  <form id="f">
+    <input type="text" id="t" placeholder="add a task..." maxlength="80" autocomplete="off">
+    <button class="add" type="submit">ADD</button>
+  </form>
+  <ul id="list"></ul>
+  <p class="count" id="count"></p>
+</div>
+<script>
+  let tasks=[{t:"buy milk",d:false},{t:"math homework",d:false},{t:"call grandma",d:false}];
+  const list=document.getElementById('list'),count=document.getElementById('count'),inp=document.getElementById('t');
+  function render(){
+    list.innerHTML='';
+    if(!tasks.length){list.innerHTML='<li class="empty" style="justify-content:center">All done! 🎉</li>'}
+    tasks.forEach((k,i)=>{
+      const li=document.createElement('li');
+      if(k.d)li.className='done';
+      const b=document.createElement('button');b.className='box';b.textContent=k.d?'✓':'';
+      b.setAttribute('aria-label','toggle task');
+      b.onclick=()=>{k.d=!k.d;render()};
+      const s=document.createElement('span');s.textContent=k.t;
+      const x=document.createElement('button');x.className='x';x.textContent='✕';
+      x.setAttribute('aria-label','delete task');
+      x.onclick=()=>{tasks.splice(i,1);render()};
+      li.append(b,s,x);list.appendChild(li);
+    });
+    const n=tasks.filter(k=>!k.d).length;
+    count.textContent=n+(n===1?' task left':' tasks left');
+  }
+  document.getElementById('f').onsubmit=e=>{
+    e.preventDefault();
+    const v=inp.value.trim();
+    if(!v)return;
+    tasks.push({t:v,d:false});inp.value='';render();inp.focus();
+  };
+  render();
+</script>
+</body>
+</html>
