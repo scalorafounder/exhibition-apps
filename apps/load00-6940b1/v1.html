@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data: blob:; media-src data: blob:; font-src data:; connect-src 'none'; form-action 'none'; base-uri 'none'; frame-src 'none'; object-src 'none'"><script>(function(){var n=function(){throw new Error("network is blocked in this app")};try{window.fetch=n;window.XMLHttpRequest=n;window.WebSocket=n;window.EventSource=n;window.open=function(){return null};if(navigator.sendBeacon)navigator.sendBeacon=function(){return false}}catch(e){}})();</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>My To-Do List Game</title>
+<style>
+body{margin:0;min-height:100vh;background:#faf6ee repeating-linear-gradient(transparent 0 38px,#dde2f3 38px 40px);font-family:"Segoe Print","Comic Sans MS",cursive;color:#1a1a5e;display:flex;justify-content:center;align-items:center}
+.card{width:min(94vw,440px);background:#fffdf7;border:3px solid #222;border-radius:6px;padding:16px;margin:12px;box-shadow:5px 5px 0 #1a1a5e44}
+h1{text-align:center;margin:4px 0 12px;font-size:26px}
+.row{display:flex;gap:8px}
+input{flex:1;min-width:0;font:inherit;font-size:18px;padding:10px;border:3px solid #222;border-radius:4px;background:#fff;color:#1a1a5e}
+button{font:inherit;cursor:pointer}
+#add{font-size:18px;border:3px solid #222;background:#ffe27a;padding:0 14px;border-radius:4px;min-height:48px;color:#1a1a5e}
+ul{list-style:none;padding:0;margin:14px 0;min-height:180px}
+li{display:flex;align-items:center;gap:10px;padding:8px 0;font-size:20px;animation:pop .25s}
+li span{flex:1;word-break:break-word}
+li.done span{text-decoration:line-through;opacity:.5}
+.box{width:40px;height:40px;border:3px solid #222;background:#fff;border-radius:4px;font-size:24px;line-height:1;color:#2a9d4a;flex:none}
+.x{width:44px;height:44px;border:none;background:none;font-size:28px;color:#222;flex:none}
+.x:hover{color:#d33}
+.foot{display:flex;justify-content:space-between;align-items:center;font-size:18px}
+#bar{height:14px;border:2px solid #222;border-radius:8px;overflow:hidden;margin-top:10px;background:#fff}
+#fill{height:100%;width:0;background:#4cc36b;transition:width .3s}
+#msg{text-align:center;font-size:20px;min-height:28px;margin-top:8px}
+#reset{border:2px solid #222;background:#fff;border-radius:4px;padding:6px 10px;color:#1a1a5e}
+@keyframes pop{from{transform:scale(.8);opacity:0}}
+</style>
+</head>
+<body>
+<div class="card">
+<h1>MY TO-DO LIST</h1>
+<form class="row" id="f">
+<input id="t" placeholder="add a task..." maxlength="40" autocomplete="off">
+<button id="add" type="submit">ADD</button>
+</form>
+<ul id="list"></ul>
+<div class="foot"><span id="left"></span><span>⭐ <b id="score">0</b></span><button id="reset" type="button">Restart</button></div>
+<div id="bar"><div id="fill"></div></div>
+<div id="msg"></div>
+</div>
+<script>
+let tasks, score, nid;
+const $=id=>document.getElementById(id);
+function init(){
+  tasks=[{id:1,t:"buy milk",d:false},{id:2,t:"math homework",d:false},{id:3,t:"call grandma",d:false}];
+  nid=4;score=0;render();
+}
+function render(){
+  const l=$("list");l.innerHTML="";
+  tasks.forEach(k=>{
+    const li=document.createElement("li");if(k.d)li.className="done";
+    const b=document.createElement("button");b.className="box";b.textContent=k.d?"✓":"";
+    b.setAttribute("aria-label","toggle");
+    b.onclick=()=>{k.d=!k.d;score+=k.d?10:-10;render()};
+    const s=document.createElement("span");s.textContent=k.t;
+    const x=document.createElement("button");x.className="x";x.textContent="✕";
+    x.setAttribute("aria-label","delete");
+    x.onclick=()=>{if(k.d)score-=0;tasks=tasks.filter(z=>z!==k);render()};
+    li.append(b,s,x);l.append(li);
+  });
+  const left=tasks.filter(k=>!k.d).length,done=tasks.length-left;
+  $("left").textContent=left+(left==1?" task left":" tasks left");
+  $("score").textContent=score;
+  $("fill").style.width=tasks.length?done/tasks.length*100+"%":"0";
+  $("msg").textContent=!tasks.length?"Empty list! Add a task 📝":left==0?"🎉 You win! All done! Add more or restart.":"Check them all off to win!";
+}
+$("f").onsubmit=e=>{
+  e.preventDefault();
+  const v=$("t").value.trim();if(!v)return;
+  tasks.push({id:nid++,t:v,d:false});$("t").value="";render();
+};
+$("reset").onclick=init;
+init();
+</script>
+</body>
+</html>
