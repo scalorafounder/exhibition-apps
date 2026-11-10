@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data: blob:; media-src data: blob:; font-src data:; connect-src 'none'; form-action 'none'; base-uri 'none'; frame-src 'none'; object-src 'none'"><script>(function(){var n=function(){throw new Error("network is blocked in this app")};try{window.fetch=n;window.XMLHttpRequest=n;window.WebSocket=n;window.EventSource=n;window.open=function(){return null};if(navigator.sendBeacon)navigator.sendBeacon=function(){return false}}catch(e){}})();</script><script>(function(){var n=function(){throw new Error("network is blocked in this app")};try{window.fetch=n;window.XMLHttpRequest=n;window.WebSocket=n;window.EventSource=n;window.open=function(){return null};if(navigator.sendBeacon)navigator.sendBeacon=function(){return false}}catch(e){}})();</script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>My To-Do List Game</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;background:repeating-linear-gradient(#cfe8fb 0 29px,#b9dcf6 30px);font-family:"Comic Sans MS","Segoe Print",cursive;color:#1a1a5e}
+.card{width:min(94vw,440px);min-height:560px;background:#fff;border:3px solid #111;border-radius:6px;padding:18px;display:flex;flex-direction:column;box-shadow:6px 6px 0 #1a1a5e33}
+h1{margin:4px 0 14px;text-align:center;font-size:28px;letter-spacing:1px}
+.row{display:flex;gap:8px}
+input[type=text]{flex:1;min-width:0;font:inherit;font-size:18px;padding:10px;border:3px solid #111;border-radius:4px;color:#1a1a5e}
+button{font:inherit;cursor:pointer}
+.add{font-size:20px;padding:10px 14px;border:3px solid #111;background:#3cc45a;color:#fff;font-weight:bold;border-radius:4px}
+.add:active{transform:scale(.95)}
+.stats{display:flex;justify-content:space-between;margin:12px 2px 0;font-size:16px}
+.bar{height:12px;border:2px solid #111;border-radius:8px;margin:6px 0 8px;overflow:hidden}
+.bar div{height:100%;width:0;background:#4cc36b;transition:width .3s}
+ul{list-style:none;margin:0;padding:0;flex:1;overflow:auto}
+li{display:flex;align-items:center;gap:12px;padding:10px 0;font-size:22px;animation:pop .25s}
+@keyframes pop{from{transform:scale(.7);opacity:0}}
+.box{width:36px;height:36px;flex:none;border:3px solid #111;border-radius:5px;background:#fff;font-size:24px;line-height:1;color:#2a9d4a}
+.t{flex:1;word-break:break-word}
+li.done .t{text-decoration:line-through;opacity:.5}
+.x{border:0;background:none;font-size:30px;color:#111;width:44px;height:44px}
+.foot{display:flex;justify-content:space-between;align-items:center;margin-top:10px;font-size:18px}
+.msg{text-align:center;font-size:20px;min-height:28px;margin-top:6px}
+.reset{border:2px solid #111;background:#fff;padding:6px 12px;border-radius:4px;color:#1a1a5e}
+</style>
+</head>
+<body>
+<div class="card">
+<h1>MY TO-DO LIST</h1>
+<form class="row" id="f">
+<input type="text" id="in" placeholder="add a task..." maxlength="40" autocomplete="off">
+<button class="add" type="submit">ADD</button>
+</form>
+<div class="stats"><span>⭐ Score: <b id="sc">0</b></span><span>🔥 Streak: <b id="st">0</b></span></div>
+<div class="bar"><div id="bar"></div></div>
+<ul id="ul"></ul>
+<div class="msg" id="msg"></div>
+<div class="foot"><span id="left"></span><button class="reset" id="rs">Restart</button></div>
+</div>
+<script>
+const startTasks=()=>[{t:"buy milk",d:false},{t:"math homework",d:false},{t:"call grandma",d:false}];
+let tasks=startTasks(),score=0,streak=0;
+const $=id=>document.getElementById(id);
+const praise=["Nice! 🎉","Boom! 💥","Crushed it! 💪","Awesome! 🌟","Yes! 🚀"];
+function render(){
+const ul=$("ul");ul.innerHTML="";
+tasks.forEach((k,i)=>{
+const li=document.createElement("li");if(k.d)li.className="done";
+const b=document.createElement("button");b.className="box";b.textContent=k.d?"✔":"";b.setAttribute("aria-label","toggle");
+b.onclick=()=>{k.d=!k.d;if(k.d){streak++;score+=10*streak;$("msg").textContent=praise[Math.floor(Math.random()*praise.length)]+" +"+10*streak}else{streak=0;score=Math.max(0,score-10);$("msg").textContent="Oops, unchecked!"}render()};
+const s=document.createElement("span");s.className="t";s.textContent=k.t;
+const x=document.createElement("button");x.className="x";x.textContent="✕";x.setAttribute("aria-label","delete");
+x.onclick=()=>{tasks.splice(i,1);render()};
+li.append(b,s,x);ul.append(li)});
+const n=tasks.filter(k=>!k.d).length,d=tasks.length-n;
+$("left").textContent=n+" task"+(n==1?"":"s")+" left";
+$("sc").textContent=score;$("st").textContent=streak;
+$("bar").style.width=tasks.length?d/tasks.length*100+"%":"0";
+if(tasks.length&&n==0){$("msg").textContent="🏆 YOU WIN! All done! Score "+score}
+else if(!tasks.length)$("msg").textContent="Add a task to play!";
+}
+$("f").onsubmit=e=>{e.preventDefault();const v=$("in").value.trim();if(!v)return;tasks.push({t:v,d:false});$("in").value="";$("msg").textContent="Task added! ✍️";render()};
+$("rs").onclick=()=>{tasks=startTasks();score=0;streak=0;$("msg").textContent="Fresh start! Check off tasks for points.";render()};
+$("msg").textContent="Check off tasks to build a streak!";
+render();
+</script>
+</body>
+</html>
