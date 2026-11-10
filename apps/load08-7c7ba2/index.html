@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data: blob:; media-src data: blob:; font-src data:; connect-src 'none'; form-action 'none'; base-uri 'none'; frame-src 'none'; object-src 'none'"><script>(function(){var n=function(){throw new Error("network is blocked in this app")};try{window.fetch=n;window.XMLHttpRequest=n;window.WebSocket=n;window.EventSource=n;window.open=function(){return null};if(navigator.sendBeacon)navigator.sendBeacon=function(){return false}}catch(e){}})();</script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Tic Tac Toe Club</title>
+<style>
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;font-family:"Comic Sans MS","Segoe Print",cursive,sans-serif;color:#151560;background:#faf7f0;background-image:repeating-linear-gradient(#faf7f0 0 31px,#dde2f3 32px);line-height:1.5}
+nav{position:sticky;top:0;background:#151560;display:flex;flex-wrap:wrap;justify-content:center;gap:4px;padding:6px;z-index:5}
+nav a{color:#fff;text-decoration:none;padding:12px 16px;border-radius:8px;font-size:1rem}
+nav a:hover{background:#3a3a9a}
+section{max-width:900px;margin:auto;padding:50px 20px}
+.hero{text-align:center;padding-top:60px}
+h1{font-size:clamp(2.2rem,8vw,4rem);margin:0}
+h2{font-size:2rem;border-bottom:3px solid #151560;display:inline-block;margin-top:0}
+.btn{font:inherit;font-size:1.1rem;color:#151560;background:#fff;border:3px solid #1a1a1a;border-radius:6px;padding:12px 20px;cursor:pointer;min-height:48px}
+.btn:active{background:#e3e6ff}
+#board{display:grid;grid-template-columns:repeat(3,1fr);width:min(88vw,360px);margin:20px auto}
+.c{aspect-ratio:1;background:none;border:0;font:inherit;font-size:clamp(3rem,16vw,5rem);color:#151560;cursor:pointer;border-right:5px solid #1a1a1a;border-bottom:5px solid #1a1a1a}
+.c:nth-child(3n){border-right:0}
+.c:nth-child(n+7){border-bottom:0}
+.c.win{background:#ffe9a8}
+.row{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;align-items:center}
+#status{font-size:1.2rem;background:#fff;border:3px solid #1a1a1a;padding:10px 16px;min-height:48px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px}
+.card{background:#fff;border:3px solid #1a1a1a;border-radius:8px;padding:14px;text-align:center}
+.card .e{font-size:3rem}
+input,textarea{font:inherit;width:100%;padding:12px;margin:6px 0;border:3px solid #1a1a1a;border-radius:6px}
+footer{text-align:center;padding:20px;background:#151560;color:#fff}
+</style>
+</head>
+<body>
+<nav><a href="#home">Home</a><a href="#play">Play</a><a href="#about">About</a><a href="#schedule">Schedule</a><a href="#gallery">Gallery</a><a href="#join">Join</a></nav>
+
+<section class="hero" id="home">
+<h1>❌ TIC TAC TOE ⭕<br>CLUB</h1>
+<p>The friendliest little club for fans of paper-and-pencil games. Pull up a chair!</p>
+<button class="btn" onclick="document.getElementById('play').scrollIntoView()">Play a game ✏️</button>
+</section>
+
+<section id="play" style="text-align:center">
+<h2>Play Now</h2>
+<p>Two players, one phone. Tap a square to place X, then O.</p>
+<div id="board"></div>
+<div class="row"><div id="status">Your turn: X</div><button class="btn" id="restart">RESTART</button></div>
+<p>Score — X: <b id="sx">0</b> · O: <b id="so">0</b> · Ties: <b id="st">0</b></p>
+</section>
+
+<section id="about">
+<h2>About Us</h2>
+<p>We started in a school library in 2019 with a notebook and a pencil. Today we are over 40 friends who love quick games, clever strategy and good snacks. Everyone is welcome, from first-timers to grandmasters of the center square.</p>
+<p><b>Pro tip:</b> start in the middle or a corner, and always watch for a fork!</p>
+</section>
+
+<section id="schedule">
+<h2>Schedule</h2>
+<div class="grid">
+<div class="card"><div class="e">📅</div><b>Monday</b><br>Beginner Basics, 4:00 PM</div>
+<div class="card"><div class="e">🏆</div><b>Wednesday</b><br>Mini Tournament, 4:30 PM</div>
+<div class="card"><div class="e">🍪</div><b>Friday</b><br>Games &amp; Snacks, 3:30 PM</div>
+</div>
+</section>
+
+<section id="gallery">
+<h2>Gallery</h2>
+<div class="grid">
+<div class="card"><div class="e">🥇</div>Spring champion</div>
+<div class="card"><div class="e">🧩</div>Giant chalk board</div>
+<div class="card"><div class="e">🎉</div>Pizza party</div>
+<div class="card"><div class="e">📓</div>The first notebook</div>
+</div>
+</section>
+
+<section id="join">
+<h2>Join the Club</h2>
+<form id="f">
+<input id="n" placeholder="Your first name" required>
+<textarea id="m" rows="3" placeholder="Why do you love tic tac toe?"></textarea>
+<button class="btn" type="submit">Sign me up!</button>
+</form>
+<p id="thanks" style="font-weight:bold"></p>
+</section>
+<footer>Made with ✏️ and fun · Tic Tac Toe Club</footer>
+
+<script>
+const L=[[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
+let b,turn,over,sc={X:0,O:0,T:0};
+const bd=document.getElementById('board'),stt=document.getElementById('status');
+function init(){
+b=Array(9).fill('');turn='X';over=false;bd.innerHTML='';
+for(let i=0;i<9;i++){const c=document.createElement('button');c.className='c';c.setAttribute('aria-label','square '+(i+1));c.onclick=()=>play(i,c);bd.appendChild(c)}
+stt.textContent='Your turn: X'}
+function play(i,c){
+if(over||b[i])return;
+b[i]=turn;c.textContent=turn;
+const w=L.find(l=>l.every(k=>b[k]===turn));
+if(w){over=true;w.forEach(k=>bd.children[k].classList.add('win'));stt.textContent='🎉 '+turn+' wins!';sc[turn]++}
+else if(b.every(x=>x)){over=true;stt.textContent="🤝 It's a tie!";sc.T++}
+else{turn=turn==='X'?'O':'X';stt.textContent='Your turn: '+turn}
+document.getElementById('sx').textContent=sc.X;
+document.getElementById('so').textContent=sc.O;
+document.getElementById('st').textContent=sc.T}
+document.getElementById('restart').onclick=init;
+document.getElementById('f').onsubmit=e=>{e.preventDefault();
+document.getElementById('thanks').textContent='Welcome, '+document.getElementById('n').value+'! See you Monday 🎉';e.target.reset()};
+init();
+</script>
+</body>
+</html>
