@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data: blob:; media-src data: blob:; font-src data:; connect-src 'none'; form-action 'none'; base-uri 'none'; frame-src 'none'; object-src 'none'"><script>(function(){var n=function(){throw new Error("network is blocked in this app")};try{window.fetch=n;window.XMLHttpRequest=n;window.WebSocket=n;window.EventSource=n;window.open=function(){return null};if(navigator.sendBeacon)navigator.sendBeacon=function(){return false}}catch(e){}})();</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>My To-Do List Game</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;background:#eef3fb;font-family:"Comic Sans MS","Segoe Print",cursive;color:#1a1a5e}
+.app{width:min(420px,95vw);background:#fff;border:3px solid #222;border-radius:6px;padding:20px;box-shadow:6px 6px 0 #1a1a5e55}
+h1{margin:0 0 12px;text-align:center;font-size:28px}
+.row{display:flex;gap:8px}
+input{flex:1;font:inherit;font-size:18px;padding:10px;border:3px solid #222;border-radius:4px;min-width:0}
+button{font:inherit;cursor:pointer}
+#add{font-size:18px;padding:10px 16px;border:3px solid #222;background:#fff;color:#1a1a5e;border-radius:4px}
+#add:active{background:#cde}
+ul{list-style:none;padding:0;margin:14px 0;min-height:180px}
+li{display:flex;align-items:center;gap:12px;padding:8px 0;font-size:22px;animation:pop .25s}
+@keyframes pop{from{transform:scale(.7);opacity:0}}
+.box{width:36px;height:36px;border:3px solid #222;background:#fff;border-radius:4px;font-size:22px;line-height:1;flex:none;color:#2a8a3a}
+li span{flex:1;word-break:break-word}
+li.done span{text-decoration:line-through;opacity:.5}
+.x{background:none;border:none;font-size:28px;color:#222;padding:4px 8px}
+.foot{display:flex;justify-content:space-between;align-items:center;font-size:18px}
+#msg{text-align:center;min-height:24px;margin-top:8px;font-size:16px}
+#reset{border:2px solid #222;background:#ffe27a;border-radius:4px;padding:6px 10px;color:#1a1a5e}
+</style>
+</head>
+<body>
+<div class="app">
+<h1>MY TO-DO LIST</h1>
+<div class="row"><input id="in" placeholder="add a task..." maxlength="40"><button id="add">ADD</button></div>
+<ul id="list"></ul>
+<div class="foot"><span id="left"></span><span>⭐ <b id="score">0</b></span><button id="reset">Restart</button></div>
+<div id="msg"></div>
+</div>
+<script>
+var tasks,score,id;
+var list=document.getElementById('list'),inp=document.getElementById('in'),msg=document.getElementById('msg');
+var cheers=["Nice! 🎉","Crushed it! 💪","Boom! 💥","Awesome! 🌟","Keep going! 🚀"];
+function init(){
+ tasks=[{t:"buy milk",d:0,i:1},{t:"math homework",d:0,i:2},{t:"call grandma",d:0,i:3}];
+ id=4;score=0;msg.textContent="Check off all tasks to win!";render();
+}
+function render(){
+ list.innerHTML="";
+ tasks.forEach(function(k){
+  var li=document.createElement('li');if(k.d)li.className="done";
+  var b=document.createElement('button');b.className="box";b.textContent=k.d?"✓":"";
+  b.onclick=function(){
+   k.d=!k.d;score+=k.d?10:-10;
+   msg.textContent=k.d?cheers[Math.floor(Math.random()*cheers.length)]:"Oops, back on the list";
+   render();
+  };
+  var s=document.createElement('span');s.textContent=k.t;
+  var x=document.createElement('button');x.className="x";x.textContent="✕";x.setAttribute("aria-label","delete");
+  x.onclick=function(){tasks=tasks.filter(function(z){return z!==k});msg.textContent="Deleted";render();};
+  li.append(b,s,x);list.appendChild(li);
+ });
+ var n=tasks.filter(function(k){return !k.d}).length;
+ document.getElementById('left').textContent=n+" task"+(n==1?"":"s")+" left";
+ document.getElementById('score').textContent=score;
+ if(tasks.length&&n==0)msg.textContent="🏆 You win! All done! Score "+score;
+ else if(!tasks.length)msg.textContent="Empty list. Add a task!";
+}
+function add(){
+ var v=inp.value.trim();
+ if(!v){msg.textContent="Type a task first ✏️";return}
+ tasks.push({t:v,d:0,i:id++});inp.value="";msg.textContent="Added!";render();inp.focus();
+}
+document.getElementById('add').onclick=add;
+inp.onkeydown=function(e){if(e.key==="Enter")add()};
+document.getElementById('reset').onclick=init;
+init();
+</script>
+</body>
+</html>
