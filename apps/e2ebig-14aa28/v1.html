@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data: blob:; media-src data: blob:; font-src data:; connect-src 'none'; form-action 'none'; base-uri 'none'; frame-src 'none'; object-src 'none'"><script>(function(){var n=function(){throw new Error("network is blocked in this app")};try{window.fetch=n;window.XMLHttpRequest=n;window.WebSocket=n;window.EventSource=n;window.open=function(){return null};if(navigator.sendBeacon)navigator.sendBeacon=function(){return false}}catch(e){}})();</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>My To-Do List Quest</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;background:#f4f1e6;background-image:repeating-linear-gradient(#f4f1e6 0 29px,#dde6ef 30px);font-family:"Comic Sans MS","Segoe Print",cursive;color:#1a1a5e}
+.card{width:min(94vw,440px);background:#fff;border:3px solid #111;border-radius:6px;padding:18px;box-shadow:6px 6px 0 #1a1a5e55}
+h1{margin:0 0 12px;text-align:center;font-size:28px;letter-spacing:1px}
+.row{display:flex;gap:8px}
+input[type=text]{flex:1;min-width:0;font:inherit;font-size:18px;padding:10px;border:3px solid #111;border-radius:4px;color:#1a1a5e}
+button{font:inherit;cursor:pointer}
+#add{font-size:20px;padding:10px 16px;border:3px solid #111;background:#ffe27a;color:#1a1a5e;border-radius:4px;min-height:48px}
+#add:active{transform:scale(.95)}
+ul{list-style:none;padding:0;margin:14px 0;min-height:170px}
+li{display:flex;align-items:center;gap:12px;padding:8px 0;font-size:22px;animation:pop .25s}
+@keyframes pop{from{transform:scale(.6);opacity:0}}
+.box{width:40px;height:40px;border:3px solid #111;background:#fff;border-radius:4px;font-size:26px;line-height:1;flex:none;color:#2a9d4a}
+li span{flex:1;word-break:break-word}
+li.done span{text-decoration:line-through;opacity:.5}
+.x{background:none;border:none;font-size:30px;width:44px;height:44px;color:#111}
+.bar{display:flex;justify-content:space-between;align-items:center;font-size:18px}
+.lvl{height:14px;border:3px solid #111;border-radius:10px;margin:10px 0;overflow:hidden}
+.lvl div{height:100%;width:0;background:linear-gradient(90deg,#6dd47e,#ffd54a);transition:width .4s}
+#msg{text-align:center;min-height:26px;font-size:18px}
+#reset{border:3px solid #111;background:#fff;border-radius:6px;padding:6px 12px;color:#1a1a5e}
+.win #msg{color:#2a9d4a;font-weight:bold}
+</style>
+</head>
+<body>
+<div class="card" id="card">
+<h1>MY TO-DO LIST</h1>
+<form class="row" id="f">
+<input type="text" id="t" placeholder="add a task..." maxlength="40" autocomplete="off">
+<button id="add" type="submit">ADD</button>
+</form>
+<ul id="l"></ul>
+<div class="lvl"><div id="p"></div></div>
+<div id="msg"></div>
+<div class="bar"><span id="left"></span><span>⭐ Score: <b id="s">0</b></span><button id="reset">Restart</button></div>
+</div>
+<script>
+var tasks, score, id;
+var l = document.getElementById('l'), t = document.getElementById('t');
+function init() {
+  tasks = [{id:1,n:"buy milk",d:false},{id:2,n:"math homework",d:false},{id:3,n:"call grandma",d:false}];
+  id = 4; score = 0; render();
+}
+function render() {
+  l.innerHTML = "";
+  tasks.forEach(function(k) {
+    var li = document.createElement('li');
+    if (k.d) li.className = "done";
+    var b = document.createElement('button');
+    b.className = "box"; b.textContent = k.d ? "✔" : "";
+    b.setAttribute("aria-label", "toggle");
+    b.onclick = function() {
+      k.d = !k.d; score += k.d ? 10 : -10;
+      if (score < 0) score = 0;
+      render();
+    };
+    var sp = document.createElement('span'); sp.textContent = k.n;
+    var x = document.createElement('button');
+    x.className = "x"; x.textContent = "✕"; x.setAttribute("aria-label", "delete");
+    x.onclick = function() { tasks = tasks.filter(function(q) { return q !== k; }); render(); };
+    li.appendChild(b); li.appendChild(sp); li.appendChild(x);
+    l.appendChild(li);
+  });
+  var left = tasks.filter(function(q) { return !q.d; }).length;
+  document.getElementById('left').textContent = left + (left === 1 ? " task left" : " tasks left");
+  document.getElementById('s').textContent = score;
+  var done = tasks.length - left;
+  document.getElementById('p').style.width = (tasks.length ? done / tasks.length * 100 : 0) + "%";
+  var m = document.getElementById('msg');
+  var c = document.getElementById('card');
+  if (tasks.length && left === 0) { m.textContent = "🎉 You win! All tasks done!"; c.className = "card win"; }
+  else if (!tasks.length) { m.textContent = "Empty list! Add a task 📝"; c.className = "card"; }
+  else { m.textContent = "Check off tasks to earn points!"; c.className = "card"; }
+}
+document.getElementById('f').onsubmit = function(e) {
+  e.preventDefault();
+  var v = t.value.trim();
+  if (!v) return;
+  tasks.push({id:id++, n:v, d:false});
+  t.value = ""; render(); t.focus();
+};
+document.getElementById('reset').onclick = init;
+init();
+</script>
+</body>
+</html>
