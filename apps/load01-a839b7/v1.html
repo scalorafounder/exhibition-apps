@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data: blob:; media-src data: blob:; font-src data:; connect-src 'none'; form-action 'none'; base-uri 'none'; frame-src 'none'; object-src 'none'"><script>(function(){var n=function(){throw new Error("network is blocked in this app")};try{window.fetch=n;window.XMLHttpRequest=n;window.WebSocket=n;window.EventSource=n;window.open=function(){return null};if(navigator.sendBeacon)navigator.sendBeacon=function(){return false}}catch(e){}})();</script><style data-xw="1">*{-webkit-user-select:none!important;user-select:none!important;-webkit-touch-callout:none!important;-webkit-tap-highlight-color:transparent!important}
+input,textarea,[contenteditable="true"],[contenteditable=""]{-webkit-user-select:text!important;user-select:text!important}
+html,body{touch-action:manipulation;overscroll-behavior:none}
+button,a,[role=button],select,summary,label{touch-action:manipulation}
+canvas{touch-action:none}
+img,svg{-webkit-user-drag:none;user-drag:none}</style><script data-xw="1">(function(){
+var held={},keys={},tn=/^(BUTTON|CANVAS)$/,ctl=/(^|[^a-z])(btn|button|ctrl|control|pad|key|arrow|dpad|left|right|up|down|jump|fire|shoot|move|hold)([^a-z]|$)/i;
+function isCtl(e){try{if(!e||e.nodeType!==1)return false;if(tn.test(e.tagName)||e.getAttribute('role')==='button')return true;return ctl.test((e.id||'')+' '+(typeof e.className==='string'?e.className:''))}catch(x){return false}}
+function noScroll(e){try{if(isCtl(e))e.style.setProperty('touch-action','none')}catch(x){}}
+// elements that listen for presses get touch-action:none, so holding or sliding never scrolls or zooms
+try{var add=EventTarget.prototype.addEventListener;EventTarget.prototype.addEventListener=function(t){if(t==='pointerdown'||t==='touchstart'||t==='mousedown')noScroll(this);return add.apply(this,arguments)}}catch(x){}
+function scan(){try{var l=document.querySelectorAll('[onpointerdown],[ontouchstart],[onmousedown],button,canvas');for(var i=0;i<l.length;i++){var e=l[i];if(e.hasAttribute('onpointerdown')||e.hasAttribute('ontouchstart')||e.hasAttribute('onmousedown')||e.tagName==='CANVAS')noScroll(e)}}catch(x){}}
+document.addEventListener('DOMContentLoaded',scan);window.addEventListener('load',scan);
+document.addEventListener('contextmenu',function(e){e.preventDefault()},true);
+document.addEventListener('selectstart',function(e){var t=e.target&&e.target.nodeType===1?e.target:e.target&&e.target.parentElement;if(t&&/^(INPUT|TEXTAREA)$/.test(t.tagName)||t&&t.isContentEditable)return;e.preventDefault()},true);
+document.addEventListener('dragstart',function(e){e.preventDefault()},true);
+function fire(el,type,id,pt){try{var o={bubbles:true,cancelable:true,composed:true,pointerId:id,pointerType:pt||'touch',isPrimary:true,view:window};
+if(type.indexOf('pointer')===0&&window.PointerEvent)el.dispatchEvent(new PointerEvent(type,o));
+else if(type.indexOf('mouse')===0)el.dispatchEvent(new MouseEvent(type,{bubbles:type!=='mouseleave',cancelable:true,view:window}));
+else if(type.indexOf('touch')===0&&window.TouchEvent)el.dispatchEvent(new TouchEvent(type,{bubbles:true,cancelable:true}))}catch(x){}}
+function release(id){var h=held[id];if(!h)return;delete held[id];var el=h.el;if(!el||!el.isConnected)return;
+['pointerup','pointerout','pointerleave'].forEach(function(t){fire(el,t,id,h.pt)});['mouseup','mouseout','mouseleave'].forEach(function(t){fire(el,t,id,h.pt)});fire(el,'touchend',id,h.pt)}
+function releaseAll(){Object.keys(held).forEach(release);Object.keys(keys).forEach(function(k){var h=keys[k];delete keys[k];try{(document.activeElement||document.body).dispatchEvent(new KeyboardEvent('keyup',{key:h.key,code:h.code,keyCode:h.kc,which:h.kc,bubbles:true,cancelable:true}))}catch(x){}})}
+window.addEventListener('pointerdown',function(e){held[e.pointerId]={el:e.target,pt:e.pointerType}},true);
+window.addEventListener('pointerup',function(e){var h=held[e.pointerId];if(!h)return;if(h.el===e.target||e.pointerType==='touch'&&h.el.contains&&h.el.contains(e.target)){delete held[e.pointerId]}else release(e.pointerId)},true);
+window.addEventListener('pointercancel',function(e){setTimeout(function(){release(e.pointerId)},0)},true);
+window.addEventListener('lostpointercapture',function(e){setTimeout(function(){release(e.pointerId)},30)},true);
+window.addEventListener('mousedown',function(e){if(!held.mouse)held.mouse={el:e.target,pt:'mouse'}},true);
+window.addEventListener('mouseup',function(e){var h=held.mouse;if(!h)return;if(h.el!==e.target){release('mouse')}else delete held.mouse},true);
+window.addEventListener('touchcancel',function(){setTimeout(function(){Object.keys(held).forEach(release)},0)},true);
+window.addEventListener('keydown',function(e){if(e.key)keys[e.code||e.key]={key:e.key,code:e.code,kc:e.keyCode}},true);
+window.addEventListener('keyup',function(e){delete keys[e.code||e.key]},true);
+window.addEventListener('blur',releaseAll);window.addEventListener('pagehide',releaseAll);
+document.addEventListener('visibilitychange',function(){if(document.hidden)releaseAll()});
+window.__xwRelease=releaseAll;
+})();</script><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>Tony's Pizza</title>
+<style>
+:root{--r:#d6402b;--o:#f59e2b;--g:#3f8f4f;--d:#2a1612;--l:#fff6e8;--c:#ffe9c9}
+*{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;-webkit-tap-highlight-color:transparent;box-sizing:border-box;margin:0}
+html,body{touch-action:manipulation;overscroll-behavior:none;height:100%;font-family:system-ui,-apple-system,Segoe UI,sans-serif;background:radial-gradient(circle at 20% 10%,#ffb347,transparent 40%),linear-gradient(135deg,#3a1a14,#7a2a1c);overflow:hidden}
+body{display:grid;place-items:center}
+#ph{width:min(100vw,430px);height:100dvh;max-height:900px;background:var(--l);color:var(--d);display:flex;flex-direction:column;position:relative;overflow:hidden;border-radius:clamp(0px,calc((100vw - 431px)*99),32px);box-shadow:0 20px 60px #0008}
+header{background:var(--r);color:#fff;padding:14px 18px;display:flex;align-items:center;justify-content:space-between;font-weight:900;font-size:22px;letter-spacing:.5px}
+header button{background:#fff3;border:0;color:#fff;border-radius:12px;width:44px;height:44px;font-size:20px}
+main{flex:1;position:relative;overflow:hidden}
+.s{position:absolute;inset:0;overflow-y:auto;padding:14px;transform:translateX(100%);opacity:0;transition:.3s;pointer-events:none}
+.s.on{transform:none;opacity:1;pointer-events:auto}
+.s.left{transform:translateX(-100%)}
+.card{background:#fff;border-radius:20px;padding:14px;margin-bottom:14px;box-shadow:0 4px 14px #0002;display:flex;align-items:center;gap:14px}
+.pz{font-size:64px;width:92px;height:92px;border-radius:50%;background:var(--c);display:grid;place-items:center;flex:none;transition:.3s}
+.card.pop .pz{transform:rotate(360deg) scale(1.1)}
+.inf{flex:1}.inf b{font-size:20px;display:block}.inf small{opacity:.7;display:block;margin:2px 0 8px}
+.pr{font-weight:900;color:var(--r);font-size:20px}
+button.b{min-height:56px;border:0;border-radius:16px;background:var(--r);color:#fff;font-weight:800;font-size:17px;padding:0 18px;transition:transform .1s}
+button.b:active{transform:scale(.93)}
+.ord{min-height:56px;width:100%}
+.row{display:flex;align-items:center;gap:10px;background:#fff;border-radius:16px;padding:10px 12px;margin-bottom:10px}
+.row span:first-child{font-size:32px}.row .n{flex:1;font-weight:700}
+.q{width:44px;height:44px;border-radius:12px;border:0;background:var(--c);font-size:20px;font-weight:900}
+.q:active{transform:scale(.9)}
+.em{text-align:center;padding:50px 20px;opacity:.7;font-size:18px}.em div{font-size:70px}
+#bar{background:var(--d);color:#fff;padding:10px 14px;display:flex;align-items:center;gap:10px}
+#bar .t{flex:1;font-size:15px}#bar .t b{font-size:22px;color:var(--o);display:block}
+#bar button{background:var(--o);color:var(--d);min-width:120px}
+nav{display:flex;background:#fff;border-top:1px solid #0002}
+nav button{flex:1;min-height:60px;border:0;background:none;font-size:13px;font-weight:700;color:#8a6a5c}
+nav button span{display:block;font-size:22px}nav .on{color:var(--r)}
+#bd{position:absolute;top:0;right:0;background:var(--o);color:var(--d);border-radius:10px;font-size:12px;padding:1px 6px}
+.ok{text-align:center;padding:40px 10px}.ok div{font-size:90px;animation:b 1s infinite}
+@keyframes b{50%{transform:translateY(-12px)}}
+</style></head><body>
+<div id="ph">
+<header>🍕 TONY'S PIZZA<button id="snd">🔇</button></header>
+<main>
+<section class="s on" id="menu"></section>
+<section class="s" id="cart"></section>
+<section class="s" id="done"><div class="ok"><div>🎉</div><h2>Thank you!</h2><p style="margin:10px 0 24px">Your pizza is in the oven. Ready in 20 minutes.</p><button class="b" onclick="go('menu')">Order more</button></div></section>
+</main>
+<div id="bar"><div class="t">YOUR CART: <span id="cnt">0 items</span><b id="tot">TOTAL $0</b></div><button class="b" id="co">CHECKOUT</button></div>
+<nav><button id="tm" class="on"><span>📋</span>Menu</button><button id="tc" style="position:relative"><span>🛒</span>Cart</button></nav>
+</div>
+<script>
+const P=[{n:"Margherita",p:10,e:"🍕",d:"Tomato, mozzarella, basil"},{n:"Pepperoni",p:12,e:"🌶️",d:"Spicy pepperoni, extra cheese"},{n:"Veggie",p:11,e:"🥬",d:"Peppers, olives, mushrooms"}];
+let q=[0,0,0],snd=false,ac;
+const $=i=>document.getElementById(i);
+function beep(f){if(!snd)return;try{ac=ac||new AudioContext();const o=ac.createOscillator(),g=ac.createGain();o.frequency.value=f;o.type="triangle";g.gain.setValueAtTime(.15,ac.currentTime);g.gain.exponentialRampToValueAtTime(.001,ac.currentTime+.15);o.connect(g);g.connect(ac.destination);o.start();o.stop(ac.currentTime+.16)}catch(e){}}
+$("snd").onclick=()=>{snd=!snd;$("snd").textContent=snd?"🔊":"🔇";beep(660)};
+function go(s){["menu","cart","done"].forEach(k=>{const e=$(k);e.classList.toggle("on",k==s);e.classList.toggle("left",k!=s&&(s=="cart"&&k=="menu"||s=="done"))});
+$("tm").classList.toggle("on",s=="menu");$("tc").classList.toggle("on",s=="cart");beep(440)}
+$("tm").onclick=()=>go("menu");$("tc").onclick=()=>go("cart");
+function add(i,d){q[i]=Math.max(0,q[i]+d);if(d>0){const c=$("c"+i);c.classList.add("pop");setTimeout(()=>c.classList.remove("pop"),350)}beep(d>0?720:300);draw()}
+function draw(){
+const n=q.reduce((a,b)=>a+b,0),t=q.reduce((a,b,i)=>a+b*P[i].p,0);
+$("cnt").textContent=n+(n==1?" item":" items");$("tot").textContent="TOTAL $"+t;
+$("tc").innerHTML='<span>🛒</span>Cart'+(n?'<i id="bd" style="font-style:normal">'+n+'</i>':'');
+if(!$("menu").children.length)$("menu").innerHTML=P.map((p,i)=>`<div class="card" id="c${i}"><div class="pz">${p.e}</div><div class="inf"><b>${p.n}</b><small>${p.d}</small><div class="pr">$${p.p}</div></div></div>`).join("");
+P.forEach((p,i)=>{const c=$("c"+i);if(!c.querySelector(".ord")){const b=document.createElement("button");b.className="b ord";b.textContent="ORDER";b.style.cssText="width:96px;min-height:56px";b.onclick=()=>add(i,1);c.appendChild(b)}});
+$("cart").innerHTML=n?q.map((x,i)=>x?`<div class="row"><span>${P[i].e}</span><span class="n">${P[i].n}<br><small>$${P[i].p} each · $${x*P[i].p}</small></span><button class="q" onclick="add(${i},-1)">−</button><b>${x}</b><button class="q" onclick="add(${i},1)">+</button></div>`:"").join("")+`<h3 style="text-align:right;margin:10px 4px">Total: $${t}</h3>`:'<div class="em"><div>🛒</div>Your cart is empty.<br>Order a pizza from the menu!</div>'}
+$("co").onclick=()=>{if(!q.reduce((a,b)=>a+b,0)){go("menu");$("c0").classList.add("pop");setTimeout(()=>$("c0").classList.remove("pop"),400);return}q=[0,0,0];draw();go("done");beep(880);setTimeout(()=>beep(1100),150)};
+document.addEventListener("contextmenu",e=>e.preventDefault());
+draw();
+</script></body></html>
