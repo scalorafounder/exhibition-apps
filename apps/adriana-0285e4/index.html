@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data: blob:; media-src data: blob:; font-src data:; connect-src 'none'; form-action 'none'; base-uri 'none'; frame-src 'none'; object-src 'none'"><script>(function(){var n=function(){throw new Error("network is blocked in this app")};try{window.fetch=n;window.XMLHttpRequest=n;window.WebSocket=n;window.EventSource=n;window.open=function(){return null};if(navigator.sendBeacon)navigator.sendBeacon=function(){return false}}catch(e){}})();</script><style data-xw="1">*{-webkit-user-select:none!important;user-select:none!important;-webkit-touch-callout:none!important;-webkit-tap-highlight-color:transparent!important}
+input,textarea,[contenteditable="true"],[contenteditable=""]{-webkit-user-select:text!important;user-select:text!important}
+html,body{touch-action:manipulation;overscroll-behavior:none}
+button,a,[role=button],select,summary,label{touch-action:manipulation}
+canvas{touch-action:none}
+img,svg{-webkit-user-drag:none;user-drag:none}</style><script data-xw="1">(function(){
+var held={},keys={},tn=/^(BUTTON|CANVAS)$/,ctl=/(^|[^a-z])(btn|button|ctrl|control|pad|key|arrow|dpad|left|right|up|down|jump|fire|shoot|move|hold)([^a-z]|$)/i;
+function isCtl(e){try{if(!e||e.nodeType!==1)return false;if(tn.test(e.tagName)||e.getAttribute('role')==='button')return true;return ctl.test((e.id||'')+' '+(typeof e.className==='string'?e.className:''))}catch(x){return false}}
+function noScroll(e){try{if(isCtl(e))e.style.setProperty('touch-action','none')}catch(x){}}
+// elements that listen for presses get touch-action:none, so holding or sliding never scrolls or zooms
+try{var add=EventTarget.prototype.addEventListener;EventTarget.prototype.addEventListener=function(t){if(t==='pointerdown'||t==='touchstart'||t==='mousedown')noScroll(this);return add.apply(this,arguments)}}catch(x){}
+function scan(){try{var l=document.querySelectorAll('[onpointerdown],[ontouchstart],[onmousedown],button,canvas');for(var i=0;i<l.length;i++){var e=l[i];if(e.hasAttribute('onpointerdown')||e.hasAttribute('ontouchstart')||e.hasAttribute('onmousedown')||e.tagName==='CANVAS')noScroll(e)}}catch(x){}}
+document.addEventListener('DOMContentLoaded',scan);window.addEventListener('load',scan);
+document.addEventListener('contextmenu',function(e){e.preventDefault()},true);
+document.addEventListener('selectstart',function(e){var t=e.target&&e.target.nodeType===1?e.target:e.target&&e.target.parentElement;if(t&&/^(INPUT|TEXTAREA)$/.test(t.tagName)||t&&t.isContentEditable)return;e.preventDefault()},true);
+document.addEventListener('dragstart',function(e){e.preventDefault()},true);
+function fire(el,type,id,pt){try{var o={bubbles:true,cancelable:true,composed:true,pointerId:id,pointerType:pt||'touch',isPrimary:true,view:window};
+if(type.indexOf('pointer')===0&&window.PointerEvent)el.dispatchEvent(new PointerEvent(type,o));
+else if(type.indexOf('mouse')===0)el.dispatchEvent(new MouseEvent(type,{bubbles:type!=='mouseleave',cancelable:true,view:window}));
+else if(type.indexOf('touch')===0&&window.TouchEvent)el.dispatchEvent(new TouchEvent(type,{bubbles:true,cancelable:true}))}catch(x){}}
+function release(id){var h=held[id];if(!h)return;delete held[id];var el=h.el;if(!el||!el.isConnected)return;
+['pointerup','pointerout','pointerleave'].forEach(function(t){fire(el,t,id,h.pt)});['mouseup','mouseout','mouseleave'].forEach(function(t){fire(el,t,id,h.pt)});fire(el,'touchend',id,h.pt)}
+function releaseAll(){Object.keys(held).forEach(release);Object.keys(keys).forEach(function(k){var h=keys[k];delete keys[k];try{(document.activeElement||document.body).dispatchEvent(new KeyboardEvent('keyup',{key:h.key,code:h.code,keyCode:h.kc,which:h.kc,bubbles:true,cancelable:true}))}catch(x){}})}
+window.addEventListener('pointerdown',function(e){held[e.pointerId]={el:e.target,pt:e.pointerType}},true);
+window.addEventListener('pointerup',function(e){var h=held[e.pointerId];if(!h)return;if(h.el===e.target||e.pointerType==='touch'&&h.el.contains&&h.el.contains(e.target)){delete held[e.pointerId]}else release(e.pointerId)},true);
+window.addEventListener('pointercancel',function(e){setTimeout(function(){release(e.pointerId)},0)},true);
+window.addEventListener('lostpointercapture',function(e){setTimeout(function(){release(e.pointerId)},30)},true);
+window.addEventListener('mousedown',function(e){if(!held.mouse)held.mouse={el:e.target,pt:'mouse'}},true);
+window.addEventListener('mouseup',function(e){var h=held.mouse;if(!h)return;if(h.el!==e.target){release('mouse')}else delete held.mouse},true);
+window.addEventListener('touchcancel',function(){setTimeout(function(){Object.keys(held).forEach(release)},0)},true);
+window.addEventListener('keydown',function(e){if(e.key)keys[e.code||e.key]={key:e.key,code:e.code,kc:e.keyCode}},true);
+window.addEventListener('keyup',function(e){delete keys[e.code||e.key]},true);
+window.addEventListener('blur',releaseAll);window.addEventListener('pagehide',releaseAll);
+document.addEventListener('visibilitychange',function(){if(document.hidden)releaseAll()});
+window.__xwRelease=releaseAll;
+})();</script><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Pure Radiance</title>
+<style>
+:root{--p:#f06a9b;--pl:#ffd6e5;--pd:#b02a62;--w:#fffafc;--dk:#4a1830;--g:#2f9e76}
+*{box-sizing:border-box;margin:0;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;-webkit-tap-highlight-color:transparent}
+html,body{touch-action:manipulation;overscroll-behavior:none}
+body{font-family:system-ui,Segoe UI,sans-serif;color:var(--dk);min-height:100dvh;overflow-x:hidden;background:radial-gradient(circle at 10% 0,var(--pl),transparent 45%),radial-gradient(circle at 100% 40%,#ffe9f1,transparent 40%),var(--w)}
+header{position:sticky;top:0;z-index:5;display:flex;align-items:center;gap:8px;padding:12px 16px;background:#fffafcee;backdrop-filter:blur(8px);border-bottom:2px solid var(--pl)}
+h1{font-family:Georgia,serif;font-style:italic;font-size:1.6rem;color:var(--pd);flex:1}
+button{font:inherit;cursor:pointer;border:0;border-radius:16px;min-height:56px;padding:0 18px;font-weight:700;transition:transform .12s,background .2s}
+button:active{transform:scale(.94)}
+.ic{background:var(--pl);color:var(--pd);min-width:56px;padding:0 14px}
+#cb{position:relative}
+#cnt{position:absolute;top:2px;right:2px;background:var(--p);color:#fff;border-radius:99px;font-size:.75rem;min-width:22px;height:22px;display:grid;place-items:center}
+.hero{text-align:center;padding:28px 16px 8px}
+.hero p{opacity:.75;margin-top:4px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:18px;max-width:980px;margin:0 auto;padding:18px 16px 40px}
+.card{background:#fff;border-radius:24px;padding:18px;box-shadow:0 8px 24px #f06a9b30;display:flex;flex-direction:column;gap:8px;align-items:center;text-align:center;transition:transform .2s}
+.card:hover{transform:translateY(-4px)}
+.pic{width:100%;height:150px;border-radius:18px;background:linear-gradient(135deg,var(--pl),#fff);display:grid;place-items:center;font-size:4.5rem;border:2px dashed var(--p)}
+.card h2{font-size:1.2rem;letter-spacing:.12em}
+.card small{opacity:.7}
+.pr{font-size:1.6rem;color:var(--pd);font-weight:800}
+.add{background:var(--p);color:#fff;width:100%}
+.add:hover{background:var(--pd)}
+#ov{position:fixed;inset:0;background:#4a183066;display:none;justify-content:flex-end;z-index:9}
+#ov.on{display:flex}
+aside{background:var(--w);width:min(420px,100%);height:100dvh;display:flex;flex-direction:column;padding:16px;gap:10px;animation:in .25s}
+@keyframes in{from{transform:translateX(60px);opacity:0}}
+.top{display:flex;align-items:center;justify-content:space-between}
+#list{flex:1;overflow:auto;display:flex;flex-direction:column;gap:10px}
+.it{display:flex;align-items:center;gap:10px;background:#fff;border-radius:16px;padding:10px;box-shadow:0 2px 10px #f06a9b22}
+.it .e{font-size:2rem}.it .n{flex:1;font-weight:700}
+.q{display:flex;align-items:center;gap:6px}
+.q button{min-height:44px;min-width:44px;padding:0;background:var(--pl);color:var(--pd);font-size:1.2rem}
+.rm{background:none;color:var(--pd);min-height:44px;padding:0 8px}
+.empty,.thx{text-align:center;padding:30px 10px;opacity:.8;font-size:1.1rem}
+.thx{opacity:1;color:var(--g);font-weight:700}
+.tot{display:flex;justify-content:space-between;font-size:1.3rem;font-weight:800;color:var(--pd)}
+.co{background:var(--pd);color:#fff;width:100%}
+.co:disabled{opacity:.4}
+.pop{animation:pop .3s}@keyframes pop{50%{transform:scale(1.4)}}
+</style></head><body>
+<header><h1>Pure Radiance</h1><button class="ic" id="snd">🔇</button><button class="ic" id="cb">🛍️<span id="cnt">0</span></button></header>
+<div class="hero"><h2 style="font-family:Georgia,serif;font-style:italic;color:var(--pd)">Glow from the inside out ✨</h2><p>Gentle skin care, made simple.</p></div>
+<div class="grid" id="grid"></div>
+<div id="ov"><aside><div class="top"><h2>Your cart</h2><button class="ic" id="cl">✕</button></div><div id="list"></div><div class="tot"><span>Total</span><span id="tt">$0.00</span></div><button class="co" id="co">Checkout</button></aside></div>
+<script>
+const P=[{id:0,n:"TONER",e:"🧴",c:1999,d:"Fresh, balancing mist"},{id:1,n:"MOISTURIZER",e:"🫙",c:1699,d:"Soft, all-day hydration"},{id:2,n:"SERUM",e:"💧",c:1299,d:"Bright, glowing skin"}];
+let cart={},snd=false,ac,done=false;
+const $=i=>document.getElementById(i),m=c=>"$"+(c/100).toFixed(2);
+function beep(f){if(!snd)return;ac=ac||new AudioContext();const o=ac.createOscillator(),g=ac.createGain();o.frequency.value=f;o.connect(g);g.connect(ac.destination);g.gain.setValueAtTime(.1,ac.currentTime);g.gain.exponentialRampToValueAtTime(.001,ac.currentTime+.15);o.start();o.stop(ac.currentTime+.15)}
+$("grid").innerHTML=P.map(p=>`<div class="card"><div class="pic">${p.e}</div><h2>${p.n}</h2><small>${p.d}</small><div class="pr">${m(p.c)}</div><button class="add" data-a="${p.id}">Add to cart</button></div>`).join("");
+function render(){
+const ids=Object.keys(cart).filter(k=>cart[k]>0);
+let n=0,t=0;ids.forEach(k=>{n+=cart[k];t+=cart[k]*P[k].c});
+$("cnt").textContent=n;$("tt").textContent=m(t);$("co").disabled=!n;
+$("list").innerHTML=done?`<div class="thx">🌸 Thank you for your order!<br>Your skin is going to glow.</div>`:ids.length?ids.map(k=>`<div class="it"><span class="e">${P[k].e}</span><div class="n">${P[k].n}<br><small>${m(P[k].c)}</small></div><div class="q"><button data-q="${k}" data-d="-1">−</button><b>${cart[k]}</b><button data-q="${k}" data-d="1">+</button></div><button class="rm" data-r="${k}">🗑️</button></div>`).join(""):`<div class="empty">Your cart is empty 🌷<br>Add something lovely!</div>`}
+document.addEventListener("click",e=>{
+const b=e.target.closest("button");if(!b)return;
+if(b.dataset.a!=null){done=false;cart[b.dataset.a]=(cart[b.dataset.a]||0)+1;beep(660);const c=$("cnt");c.classList.remove("pop");void c.offsetWidth;c.classList.add("pop");render()}
+else if(b.dataset.q!=null){cart[b.dataset.q]+=+b.dataset.d;beep(500);render()}
+else if(b.dataset.r!=null){delete cart[b.dataset.r];beep(300);render()}
+});
+$("cb").onclick=()=>{$("ov").classList.add("on");beep(440)};
+$("cl").onclick=()=>{$("ov").classList.remove("on");done=false;render()};
+$("ov").onclick=e=>{if(e.target.id=="ov")$("cl").click()};
+$("co").onclick=()=>{cart={};done=true;render();beep(880);setTimeout(()=>beep(1100),150)};
+$("snd").onclick=()=>{snd=!snd;$("snd").textContent=snd?"🔊":"🔇";beep(700)};
+document.addEventListener("contextmenu",e=>e.preventDefault());
+render();
+</script></body></html>
