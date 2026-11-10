@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data: blob:; media-src data: blob:; font-src data:; connect-src 'none'; form-action 'none'; base-uri 'none'; frame-src 'none'; object-src 'none'"><script>(function(){var n=function(){throw new Error("network is blocked in this app")};try{window.fetch=n;window.XMLHttpRequest=n;window.WebSocket=n;window.EventSource=n;window.open=function(){return null};if(navigator.sendBeacon)navigator.sendBeacon=function(){return false}}catch(e){}})();</script><script>(function(){var n=function(){throw new Error("network is blocked in this app")};try{window.fetch=n;window.XMLHttpRequest=n;window.WebSocket=n;window.EventSource=n;window.open=function(){return null};if(navigator.sendBeacon)navigator.sendBeacon=function(){return false}}catch(e){}})();</script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>My To-Do List Quest</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;background:repeating-linear-gradient(#cfe9ff 0 29px,#b5dbf7 30px);font-family:"Comic Sans MS","Segoe Print",cursive;color:#1c1b5a}
+.card{width:min(94vw,440px);min-height:540px;background:#fff;border:4px solid #222;border-radius:6px;padding:18px;display:flex;flex-direction:column;box-shadow:6px 6px 0 #1c1b5a33}
+h1{margin:4px 0 12px;text-align:center;font-size:28px;letter-spacing:1px}
+.row{display:flex;gap:8px}
+input{flex:1;min-width:0;font:inherit;font-size:18px;padding:10px;border:3px solid #222;border-radius:4px;color:#1c1b5a}
+button{font:inherit;cursor:pointer}
+#add{border:3px solid #222;background:#3cc65a;font-size:18px;font-weight:bold;padding:0 16px;min-height:48px;color:#fff;border-radius:4px}
+#add:active{background:#2a9d3f}
+.bar{margin:12px 0 4px;height:16px;border:3px solid #222;border-radius:10px;overflow:hidden}
+#fill{height:100%;width:0;background:linear-gradient(90deg,#4cd964,#ffd93b);transition:width .4s}
+.stats{display:flex;justify-content:space-between;font-size:15px}
+ul{list-style:none;margin:8px 0;padding:0;flex:1}
+li{display:flex;align-items:center;gap:12px;padding:8px 0;font-size:21px;animation:pop .25s}
+@keyframes pop{from{transform:scale(.7);opacity:0}}
+.box{width:40px;height:40px;border:3px solid #222;border-radius:5px;background:#fff;font-size:24px;line-height:1;flex:none;color:#2a9d3f}
+.t{flex:1;word-break:break-word}
+.done .t{text-decoration:line-through;opacity:.5}
+.x{background:none;border:0;font-size:30px;width:44px;height:44px;color:#222}
+.foot{display:flex;justify-content:space-between;align-items:center;font-size:18px}
+#reset{border:2px solid #222;background:#fff;border-radius:6px;padding:8px 12px;color:#1c1b5a}
+#msg{text-align:center;font-size:18px;min-height:26px;margin:4px 0;font-weight:bold}
+</style>
+</head>
+<body>
+<div class="card">
+<h1>MY TO-DO LIST</h1>
+<form class="row" id="f">
+<input id="in" placeholder="add a task..." maxlength="40" autocomplete="off">
+<button id="add" type="submit">ADD</button>
+</form>
+<div class="bar"><div id="fill"></div></div>
+<div class="stats"><span>⭐ Score: <b id="sc">0</b></span><span>🔥 Combo: <b id="cb">0</b></span></div>
+<ul id="list"></ul>
+<div id="msg"></div>
+<div class="foot"><span id="left"></span><button id="reset">🔄 Restart</button></div>
+</div>
+<script>
+let tasks,score,combo,id;
+const $=s=>document.getElementById(s);
+const starter=["buy milk","math homework","call grandma"];
+function init(){tasks=starter.map((t,i)=>({id:i,t,d:false}));id=3;score=0;combo=0;$("msg").textContent="Check off tasks to score points!";render()}
+function render(){
+ const l=$("list");l.innerHTML="";
+ tasks.forEach(k=>{
+  const li=document.createElement("li");if(k.d)li.className="done";
+  const b=document.createElement("button");b.className="box";b.textContent=k.d?"✔":"";b.setAttribute("aria-label","toggle");
+  b.onclick=()=>toggle(k.id);
+  const s=document.createElement("span");s.className="t";s.textContent=k.t;
+  const x=document.createElement("button");x.className="x";x.textContent="✕";x.setAttribute("aria-label","delete");
+  x.onclick=()=>{tasks=tasks.filter(z=>z.id!==k.id);combo=0;render()};
+  li.append(b,s,x);l.appendChild(li);
+ });
+ const left=tasks.filter(k=>!k.d).length,done=tasks.length-left;
+ $("left").textContent=left+" task"+(left==1?"":"s")+" left";
+ $("sc").textContent=score;$("cb").textContent=combo;
+ $("fill").style.width=tasks.length?done/tasks.length*100+"%":"0";
+ if(tasks.length&&left==0)$("msg").textContent="🏆 You win! All done! Score "+score;
+ else if(!tasks.length)$("msg").textContent="Empty list! Add a task 😊";
+}
+function toggle(i){
+ const k=tasks.find(z=>z.id===i);k.d=!k.d;
+ if(k.d){combo++;score+=10*combo;$("msg").textContent=["Nice! 🎉","Combo! 🔥","Unstoppable! 🚀"][Math.min(combo-1,2)]}
+ else{combo=0;score=Math.max(0,score-10);$("msg").textContent="Oops, back on the list"}
+ render();
+}
+$("f").onsubmit=e=>{
+ e.preventDefault();const v=$("in").value.trim();
+ if(!v)return;tasks.push({id:id++,t:v,d:false});$("in").value="";$("msg").textContent="New quest added! ➕";render();
+};
+$("reset").onclick=init;
+init();
+</script>
+</body>
+</html>
